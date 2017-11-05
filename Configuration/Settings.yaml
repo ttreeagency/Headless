@@ -1,0 +1,28 @@
+Ttree:
+  Headless:
+    namespaceMapping:
+      '*': Neos.NodeTypes
+      'Neos': Neos.Neos
+
+Wwwision:
+  GraphQL:
+    endpoints:
+      neos/graphql:
+        querySchema: Ttree\Headless\Types\RootTypes\Query
+
+Neos:
+  Flow:
+    security:
+      authentication:
+        providers:
+          Neos.Neos:Backend:
+            requestPatterns:
+              Ttree.Headless:ControllerObjectName:
+                pattern: ControllerObjectName
+                patternOptions:
+                  controllerObjectNamePattern: 'Wwwision\GraphQL\.*'
+    mvc:
+      routes:
+        Wwwision.GraphQL:
+          variables:
+            endpoint: neos/graphql

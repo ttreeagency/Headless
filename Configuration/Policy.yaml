@@ -1,0 +1,19 @@
+privilegeTargets:
+
+  Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege:
+
+    Ttree.Headless:GraphiQL:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "neos/graphql"))'
+    Ttree.Headless:Endpoint:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "neos/graphql"))'
+
+roles:
+
+  Neos.Neos:Editor:
+    privileges:
+      -
+        privilegeTarget: Ttree.Headless:GraphiQL
+        permission: GRANT
+      -
+        privilegeTarget: Ttree.Headless:Endpoint
+        permission: GRANT

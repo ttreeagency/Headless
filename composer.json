@@ -1,0 +1,19 @@
+{
+  "name": "ttree/headless",
+  "description": "Headless CMS API for Neos CMS",
+  "type": "neos-package",
+  "require": {
+    "neos/neos": "^3.2",
+    "wwwision/graphql": "^2.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ttree\\Headless\\": "Classes/"
+    }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "Ttree.Headless"
+    }
+  }
+}
