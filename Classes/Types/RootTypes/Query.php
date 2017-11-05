@@ -8,6 +8,7 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Neos\Domain\Service\NodeSearchService;
+use Ttree\Headless\Domain\Service\QueryCompiler;
 use Ttree\Headless\Types\RootTypes\QueryFields\Base;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\IterableAccessibleObject;
@@ -24,42 +25,21 @@ use Ttree\Headless\Types\Workspace;
  */
 class Query extends ObjectType
 {
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeSearchService
-     */
-    protected $nodeSearchService;
-
     /**
      * @param TypeResolver $typeResolver
      */
     public function __construct(TypeResolver $typeResolver)
     {
+        // todo ugly ... need to be done with proper API, this coupling is bad
+        $queryCompiler = new QueryCompiler();
+
         /** @noinspection PhpUnusedParameterInspection */
         return parent::__construct([
             'name' => 'Query',
             'description' => 'Root queries for the Neos Content Repository',
             'fields' => \array_merge(
-                Base::fields($typeResolver)
+                Base::fields($typeResolver),
+                $queryCompiler->build($typeResolver)
             )
         ]);
     }

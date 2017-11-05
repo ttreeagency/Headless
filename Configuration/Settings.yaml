@@ -1,8 +1,9 @@
 Ttree:
   Headless:
     namespaceMapping:
-      '*': Neos.NodeTypes
-      'Neos': Neos.Neos
+      '*': Neos.Demo
+      'Neos.NodeTypes': NodeTypes
+      'Neos.Neos': Neos
 
 Wwwision:
   GraphQL:

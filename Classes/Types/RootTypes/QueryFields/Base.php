@@ -89,34 +89,6 @@ final class Base
                 }
             ],
 
-            'Chapter' => [
-                'type' => $typeResolver->get(Node::class),
-                'args' => [
-                    'identifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
-                    'path' => ['type' => $typeResolver->get(Scalars\AbsoluteNodePath::class)],
-                ],
-                'resolve' => function ($_, array $args) use ($queryFields) {
-                    $defaultContext = $queryFields->contextFactory->create();
-                    if (isset($args['identifier'])) {
-                        return new AccessibleObject($defaultContext->getNodeByIdentifier($args['identifier']));
-                    } elseif (isset($args['path'])) {
-                        return new AccessibleObject($defaultContext->getNode($args['path']));
-                    }
-                    throw new \InvalidArgumentException('node path or identifier have to be specified!', 1460064707);
-                }
-            ],
-
-            'allChapters' => [
-                'type' => Type::listOf($typeResolver->get(Node::class)),
-                'resolve' => function ($_, array $args) use ($queryFields) {
-                    $defaultContext = $queryFields->contextFactory->create();
-                    $query = new FlowQuery([$defaultContext->getRootNode()]);
-                    $query->find('[instanceof Neos.Demo:Chapter]');
-
-                    return new IterableAccessibleObject($query->find('[instanceof Neos.Demo:Chapter]')->get());
-                }
-            ],
-
             'rootNode' => [
                 'type' => $typeResolver->get(Node::class),
                 'resolve' => function ($_) use ($queryFields) {
