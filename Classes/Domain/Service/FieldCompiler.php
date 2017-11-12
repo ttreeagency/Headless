@@ -12,7 +12,7 @@ use Wwwision\GraphQL\TypeResolver;
 /**
  * @Flow\Scope("singleton")
  */
-class QueryCompiler
+class FieldCompiler
 {
     /**
      * @var NodeTypeManager

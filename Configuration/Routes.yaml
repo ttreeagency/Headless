@@ -1,0 +1,45 @@
+-
+  name: 'graphql - advanced - GraphiQL UI'
+  uriPattern: 'neos/graphql/advanced'
+  defaults:
+    '@package':    'Wwwision.GraphQL'
+    '@controller': 'Standard'
+    '@action':     'index'
+    '@format':     'html'
+    'endpoint':    'Ttree.Headless:Advanced'
+  appendExceedingArguments: true
+  httpMethods: [GET]
+
+-
+  name: 'graphql - advanced - endpoint'
+  uriPattern: 'neos/graphql/advanced'
+  defaults:
+    '@package':    'Wwwision.GraphQL'
+    '@controller': 'Standard'
+    '@action':     'query'
+    '@format':     'json'
+    'endpoint':    'Ttree.Headless:Advanced'
+  httpMethods: [POST]
+
+-
+  name: 'graphql - simple - GraphiQL UI'
+  uriPattern: 'neos/graphql/simple'
+  defaults:
+    '@package':    'Wwwision.GraphQL'
+    '@controller': 'Standard'
+    '@action':     'index'
+    '@format':     'html'
+    'endpoint':    'Ttree.Headless:Simple'
+  appendExceedingArguments: true
+  httpMethods: [GET]
+
+-
+  name: 'graphql - simple - endpoint'
+  uriPattern: 'neos/graphql/simple'
+  defaults:
+    '@package':    'Wwwision.GraphQL'
+    '@controller': 'Standard'
+    '@action':     'query'
+    '@format':     'json'
+    'endpoint':    'Ttree.Headless:Simple'
+  httpMethods: [POST]

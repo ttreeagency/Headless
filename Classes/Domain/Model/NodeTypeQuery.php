@@ -92,7 +92,7 @@ final class NodeTypeQuery
                 'resolve' => function ($_, array $args) {
                     $defaultContext = $this->contextFactory->create();
                     $query = new FlowQuery([$defaultContext->getRootNode()]);
-                    $query->find(\vsprintf('[instanceof %s]', [$this->nodeType->getName()]));
+                    $query = $query->find(\vsprintf('[instanceof %s]', [$this->nodeType->getName()]));
 
                     return new IterableAccessibleObject($query->get());
                 }

@@ -2,18 +2,29 @@ privilegeTargets:
 
   Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege:
 
-    Ttree.Headless:GraphiQL:
-      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "neos/graphql"))'
-    Ttree.Headless:Endpoint:
-      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "neos/graphql"))'
+    Ttree.Headless:SimpleGraphiQL:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "Ttree.Headless:Simple"))'
+    Ttree.Headless:SimpleEndpoint:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "Ttree.Headless:Simple"))'
+
+    Ttree.Headless:AdvancedGraphiQL:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "Ttree.Headless:Advanced"))'
+    Ttree.Headless:AdvancedEndpoint:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "Ttree.Headless:Advanced"))'
 
 roles:
 
   Neos.Neos:Editor:
     privileges:
       -
-        privilegeTarget: Ttree.Headless:GraphiQL
+        privilegeTarget: Ttree.Headless:SimpleGraphiQL
         permission: GRANT
       -
-        privilegeTarget: Ttree.Headless:Endpoint
+        privilegeTarget: Ttree.Headless:SimpleEndpoint
+        permission: GRANT
+      -
+        privilegeTarget: Ttree.Headless:AdvancedGraphiQL
+        permission: GRANT
+      -
+        privilegeTarget: Ttree.Headless:AdvancedEndpoint
         permission: GRANT

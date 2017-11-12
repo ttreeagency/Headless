@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\Headless\Types\RootTypes\QueryFields;
+namespace Ttree\Headless\Types\RootTypes\Advanced\QueryFields;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;

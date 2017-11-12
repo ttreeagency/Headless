@@ -8,8 +8,10 @@ Ttree:
 Wwwision:
   GraphQL:
     endpoints:
-      neos/graphql:
-        querySchema: Ttree\Headless\Types\RootTypes\Query
+      Ttree.Headless:Advanced:
+        querySchema: Ttree\Headless\Types\RootTypes\Advanced\Query
+      Ttree.Headless:Simple:
+        querySchema: Ttree\Headless\Types\RootTypes\Simple\Query
 
 Neos:
   Flow:
@@ -24,6 +26,5 @@ Neos:
                   controllerObjectNamePattern: 'Wwwision\GraphQL\.*'
     mvc:
       routes:
-        Wwwision.GraphQL:
-          variables:
-            endpoint: neos/graphql
+        Ttree.Headless:
+          position: 'before Neos.Neos'
