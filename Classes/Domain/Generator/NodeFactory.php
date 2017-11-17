@@ -1,19 +1,17 @@
 <?php
 
-namespace Ttree\Headless\Domain\Service;
+namespace Ttree\Headless\Domain\Generator;
 
 
-use GraphQL\Type\Definition\ObjectType;
-use Ttree\Headless\Domain\Model\ContentNamespace;
-use Ttree\Headless\Types\NamespacedNode;
+use Neos\ContentRepository\Domain\Model as CR;
+use Ttree\Headless\Types\Node;
 use Wwwision\GraphQL\TypeResolver;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model as CR;
 
 /**
  * @Flow\Scope("singleton")
  */
-class NamespacedNodeFactory
+class NodeFactory
 {
     protected $cache = [];
 
@@ -23,7 +21,7 @@ class NamespacedNodeFactory
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
         }
-        $this->cache[$name] = new NamespacedNode($typeResolver, $nodeType);
+        $this->cache[$name] = new Node($typeResolver, $nodeType);
         return $this->cache[$name];
     }
 }

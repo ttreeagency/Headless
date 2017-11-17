@@ -1,15 +1,14 @@
 <?php
 
-namespace Ttree\Headless\Domain\Service;
+namespace Ttree\Headless\Domain\Generator;
 
-use GraphQL\Type\Definition\ObjectType;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Wwwision\GraphQL\TypeResolver;
 use Neos\Flow\Annotations as Flow;
 
-class NamespacedQueryDefinition
+class QueryDefinition
 {
     /**
      * @var NodeTypeManager
@@ -47,15 +46,17 @@ class NamespacedQueryDefinition
             }
             $namespaces[] = $nodeTypeNamespace;
         }
+
         $fields = [];
         foreach ($namespaces as $namespace) {
-            $fields = \array_merge(NamespacedQueryField::create(
+            $fields = \array_merge(QueryField::create(
                 new ContentNamespace($namespace),
                 $this->typeResolver,
-                NamespacedObjectType::createByPackage($this->typeResolver, new ContentNamespace($namespace))
+                ObjectType::createByPackage($this->typeResolver, new ContentNamespace($namespace))
             )->fields(), $fields);
         }
         $this->fields = $fields;
+
         return $this->fields;
     }
 }

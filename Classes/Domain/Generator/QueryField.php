@@ -1,13 +1,12 @@
 <?php
 
-namespace Ttree\Headless\Domain\Service;
+namespace Ttree\Headless\Domain\Generator;
 
 use GraphQL\Type\Definition\ObjectType;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Wwwision\GraphQL\TypeResolver;
-use Neos\Flow\Annotations as Flow;
 
-class NamespacedQueryField
+class QueryField
 {
     protected $fields = [];
 
@@ -25,7 +24,7 @@ class NamespacedQueryField
 
     public static function create(ContentNamespace $namespace, TypeResolver $typeResolver, ObjectType $type)
     {
-        return new NamespacedQueryField($namespace, $typeResolver, $type);
+        return new QueryField($namespace, $typeResolver, $type);
     }
 
     public function fields(): array

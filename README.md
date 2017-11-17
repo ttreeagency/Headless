@@ -53,12 +53,13 @@ generated from Node Types definitions and currently look like:
 The initial goal is to have a read only API, the next step will to add mutation support.
 
 #### 1.0
+
 - [x] Automatic query generation based on the node configuration
-- [ ] Content Collection support
-- [ ] Images support
-- [ ] Assets support
+- [ ] Image support
+- [ ] Asset(s) support
 - [ ] Reference(s) support
 - [ ] Pagination support
+- [ ] Content Collection support
 - [ ] More advanced API, like a good support for Facebook Relay
 
 #### 1.2
