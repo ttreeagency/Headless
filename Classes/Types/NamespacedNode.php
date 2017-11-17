@@ -7,6 +7,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Ttree\Headless\Domain\Model\TypeMapper;
+use Ttree\Headless\Types\Scalars\DateTime;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\IterableAccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
@@ -27,78 +28,33 @@ class NamespacedNode extends ObjectType
     {
         $nodeType = new Model\NodeType($nodeType);
         $fields = [
-            '_name' => [
-                'type' => Type::string(),
-                'description' => 'Name of this node'
-            ],
-            '_label' => [
-                'type' => Type::string(),
-                'description' => 'Full length plain text label of this node'
-            ],
-            '_hasProperty' => [
-                'type' => Type::boolean(),
-                'description' => 'If this node has a property with the given name',
-                'args' => [
-                    'propertyName' => ['type' => Type::nonNull(Type::string())],
-                ],
-                'resolve' => function (AccessibleObject $wrappedNode, array $args) {
+            'id' => [
+                'type' => $typeResolver->get(Uuid::class),
+                'description' => 'The identifier of this node (not the technical id)',
+                'resolve' => function (AccessibleObject $wrappedNode) {
                     /** @var NodeInterface $node */
                     $node = $wrappedNode->getObject();
-                    return $node->hasProperty($args['propertyName']);
+                    return $node->getIdentifier();
                 }
             ],
-            '_isHidden' => [
-                'type' => Type::boolean(),
-                'description' => 'Whether this node is marked hidden'
+            'createdAt' => [
+                'type' => $typeResolver->get(DateTime::class),
+                'description' => 'The identifier of this node (not the technical id)',
+                'resolve' => function (AccessibleObject $wrappedNode) {
+                    /** @var NodeInterface $node */
+                    $node = $wrappedNode->getObject();
+                    return $node->getNodeData()->getCreationDateTime();
+                }
             ],
-            '_isHiddenInIndex' => [
-                'type' => Type::boolean(),
-                'description' => 'Whether this node should be hidden in indexes'
+            'updatedAt' => [
+                'type' => $typeResolver->get(DateTime::class),
+                'description' => 'The identifier of this node (not the technical id)',
+                'resolve' => function (AccessibleObject $wrappedNode) {
+                    /** @var NodeInterface $node */
+                    $node = $wrappedNode->getObject();
+                    return $node->getNodeData()->getLastModificationDateTime();
+                }
             ],
-            '_hiddenBeforeDateTime' => [
-                'type' => $typeResolver->get(Scalars\DateTime::class),
-                'description' => 'The date and time before which this node will be automatically hidden'
-            ],
-            '_hiddenAfterDateTime' => [
-                'type' => $typeResolver->get(Scalars\DateTime::class),
-                'description' => 'The node and time after which this node will be hidden'
-            ],
-            '_isRemoved' => [
-                'type' => Type::boolean(),
-                'description' => 'Whether this node has been removed'
-            ],
-            '_isVisible' => [
-                'type' => Type::boolean(),
-                'description' => 'Whether this node is visible (depending on hidden flag, hiddenBeforeDateTime and hiddenAfterDateTime)'
-            ],
-            '_isAccessible' => [
-                'type' => Type::boolean(),
-                'description' => 'Whether this node may be accessed according to the current security context'
-            ],
-            '_path' => [
-                'type' => $typeResolver->get(AbsoluteNodePath::class),
-                'description' => 'The absolute path of tis node'
-            ],
-            '_contextPath' => [
-                'type' => Type::string(),
-                'description' => 'The absolute path of this node including context information'
-            ],
-            '_depth' => [
-                'type' => Type::int(),
-                'description' => 'The level at which this node is located in the tree'
-            ],
-            '_workspace' => [
-                'type' => $typeResolver->get(Workspace::class),
-                'description' => 'The workspace this node is contained in'
-            ],
-            '_identifier' => [
-                'type' => $typeResolver->get(Uuid::class),
-                'description' => 'The identifier of this node (not the technical id)'
-            ],
-            '_nodeType' => [
-                'type' => $typeResolver->get(NodeType::class),
-                'description' => 'The node type of this node'
-            ]
         ];
 
         foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
