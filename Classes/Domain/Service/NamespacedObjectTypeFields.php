@@ -15,6 +15,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\Plural;
+use Ttree\Headless\Types\NamespacedNode;
 use Ttree\Headless\Types\Scalars;
 use Ttree\Headless\Types\Node;
 use Wwwision\GraphQL\AccessibleObject;
@@ -37,6 +38,12 @@ class NamespacedObjectTypeFields
     protected $nodeTypeManager;
 
     /**
+     * @var NamespacedNodeFactory
+     * @Flow\Inject
+     */
+    protected $namespacedNodeFactory;
+
+    /**
      * @var ContentNamespace
      */
     protected $contentNamespace;
@@ -48,10 +55,11 @@ class NamespacedObjectTypeFields
         return $self->fields($typeResolver);
     }
 
-    protected function singleFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName)
+    protected function singleFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
     {
+        $type = $this->namespacedNodeFactory->create($typeResolver, $nodeType);
         return [
-            'type' => $typeResolver->get(Node::class),
+            'type' => $type,
             'args' => [
                 'identifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
                 'path' => ['type' => $typeResolver->get(Scalars\AbsoluteNodePath::class)],
@@ -82,7 +90,7 @@ class NamespacedObjectTypeFields
             if ($nodeTypeNamespace !== $this->contentNamespace->getRaw()) {
                 continue;
             }
-            $fields[(string)$nodeTypeShortName] = $this->singleFieldDefinition($typeResolver, $nodeTypeShortName);
+            $fields[(string)$nodeTypeShortName] = $this->singleFieldDefinition($typeResolver, $nodeTypeShortName, $nodeType);
             $fields[$this->allRecordsFieldName($nodeTypeShortName)] = $this->allRecordsFieldDefinition($typeResolver, $nodeTypeShortName, $nodeType);
         }
         return $fields;
@@ -95,16 +103,21 @@ class NamespacedObjectTypeFields
 
     protected function allRecordsFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
     {
+        $type = $this->namespacedNodeFactory->create($typeResolver, $nodeType);
         return [
-            'type' => Type::listOf($typeResolver->get(Node::class)),
+            'type' => Type::listOf($type),
             'args' => [
-                'identifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
+                'parentIdentifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
                 'parentPath' => ['type' => $typeResolver->get(Scalars\AbsoluteNodePath::class)],
             ],
             'description' => 'All ' . $nodeTypeShortName . 'content types',
             'resolve' => function ($_, array $args) use ($nodeType) {
                 $defaultContext = $this->contextFactory->create();
-                $parentNode = isset($args['parentPath']) ? $defaultContext->getNode($args['parentPath']) : $defaultContext->getRootNode();
+                if (isset($args['parentIdentifier'])) {
+                    $parentNode = $defaultContext->getNodeByIdentifier($args['parentIdentifier']);
+                } else {
+                    $parentNode = isset($args['parentPath']) ? $defaultContext->getNode($args['parentPath']) : $defaultContext->getRootNode();
+                }
                 $query = new FlowQuery([$parentNode]);
 
                 return new IterableAccessibleObject($query->find('[instanceof ' . $nodeType->getName() . ']')->get());
