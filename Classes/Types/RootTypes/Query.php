@@ -1,6 +1,6 @@
 <?php
 
-namespace Ttree\Headless\Types\RootTypes\Simple;
+namespace Ttree\Headless\Types\RootTypes;
 
 use GraphQL\Type\Definition\ObjectType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
