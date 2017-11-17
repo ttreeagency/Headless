@@ -2,28 +2,79 @@
 
 ## Description
 
-This package is highly experimental and not working currently, don't use it at home.
+This package is highly experimental, don't use it at home.
 
-Most of the code stollen from [Wwwision.Neos.GraphQL](https://github.com/bwaidelich/Wwwision.Neos.GraphQL) and the API
+Lots of inspiration and foundation taken from from [Wwwision.Neos.GraphQL](https://github.com/bwaidelich/Wwwision.Neos.GraphQL) and the API
 took a lots of inspiration from the Simple API of [GraphCMS](https://graphcms.com/docs/api_simple/).
 
 ## Goals
 
-Building a human frienldy API to access content nodes from the Content Repository, with queries 
-that use the semantic of the content. 
+The goal of the package is to create a Domain centric GraphQL API. The queries/mutations semantics are automatically
+generated from Node Types definitions and currently look like:
 
-### Todos
+```
+{
+  NeosNeosNamespace {
+    allShortcuts {
+      id
+      createdAt
+      updatedAt
+      title
+      targetMode
+      target
+    }
+  }
+  NeosDemoNamespace {
+    Chapter(identifier: "23f35ab0-0d82-21e7-0006-dd63c5b3dce8") {
+      title
+    }
+    allChapters {
+      id
+      title
+      chapterDescription
+    }
+    allHomepages {
+      title
+      layout
+      subpageLayout
+    }
+  }
+}
+```
+
+## System Property
+
+- `id`: the node identifier
+- `createdAt`: node creation time
+- `updatedAt`: node last modification time
+
+### Roadmap
 
 The initial goal is to have a read only API, the next step will to add mutation support.
 
-- [ ] Automatic query generation based on the node configuration
-- [ ] An API to register custom query generation per node type
-- [ ] An API to register custom query not directly attached to a node type
-- [ ] Management of `Permanent Auth Token` to access to API
-- [ ] Intelligent cache layer with auto flushing
+#### 1.0
+- [x] Automatic query generation based on the node configuration
+- [ ] Content Collection support
+- [ ] Images support
+- [ ] Assets support
+- [ ] Reference(s) support
 - [ ] Pagination support
-- [ ] Mutation support with fine grained access permissions (CRUD configuration per node type and per property)
 - [ ] More advanced API, like a good support for Facebook Relay
+
+#### 1.2
+
+- [ ] Management of `Permanent Auth Token` to access to API
+- [ ] An API to register custom query generation per node type
+
+#### 2.0
+
+- [ ] Intelligent cache layer with auto flushing
+- [ ] Automatic mutations generation based on the node configuration
+- [ ] An API to register custom query not directly attached to a node type
+
+#### 3.0
+
+- [ ] Mutation support with fine grained access permissions (CRUD configuration per node type and per property)
 
 ### Examples
 
