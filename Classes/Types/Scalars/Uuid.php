@@ -27,14 +27,6 @@ class Uuid extends ScalarType
     public $description = 'A UUID represented as string';
 
     /**
-     * Note: The public constructor is needed because the parent constructor is protected, any other way?
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * @param string $value
      * @return string
      */

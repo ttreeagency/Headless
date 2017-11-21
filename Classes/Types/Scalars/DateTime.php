@@ -23,14 +23,6 @@ class DateTime extends ScalarType
     public $description = 'A Date and time, represented as ISO 8601 conform string';
 
     /**
-     * Note: The public constructor is needed because the parent constructor is protected, any other way?
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * @param \DateTimeInterface $value
      * @return string
      */
