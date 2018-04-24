@@ -1,16 +1,4 @@
 -
-  name: 'graphql - simple - GraphiQL UI'
-  uriPattern: 'api/graphql/simple'
-  defaults:
-    '@package':    'Wwwision.GraphQL'
-    '@controller': 'Standard'
-    '@action':     'index'
-    '@format':     'html'
-    'endpoint':    'Ttree.Headless:Simple'
-  appendExceedingArguments: true
-  httpMethods: [GET]
-
--
   name: 'graphql - simple - endpoint'
   uriPattern: 'api/graphql/simple'
   defaults:
