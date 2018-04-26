@@ -31,6 +31,14 @@ class Workspace extends ScalarType
     public $description = 'A workspace, represented by its name';
 
     /**
+     * Note: The public constructor is needed because the parent constructor is protected, any other way?
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
      * @param NeosWorkspace $value
      * @return string
      */

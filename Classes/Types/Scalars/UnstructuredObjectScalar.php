@@ -23,6 +23,14 @@ class UnstructuredObjectScalar extends ScalarType
     public $description = 'Type scalar for unknown structures (represented as JSON object)';
 
     /**
+     * Note: The public constructor is needed because the parent constructor is protected, any other way?
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
      * @param array $value
      * @return array
      */
