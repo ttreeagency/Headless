@@ -15,7 +15,7 @@ class NodeFactory
 {
     protected $cache = [];
 
-    public function create(TypeResolver $typeResolver, CR\NodeType $nodeType)
+    public function create(TypeResolver $typeResolver, CR\NodeType $nodeType): Node
     {
         $name = $nodeType->getName();
         if (isset($this->cache[$name])) {
