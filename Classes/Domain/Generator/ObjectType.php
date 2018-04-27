@@ -13,8 +13,8 @@ class ObjectType extends \GraphQL\Type\Definition\ObjectType
     {
         return parent::__construct([
             'name' => $namespace->getNamespace() . 'Types',
-            'description' => 'Access content type for Neos.Demo namespace',
-            'fields' => ObjectTypeFields::createByPackage($typeResolver, $namespace)
+            'description' => sprintf('Access content type for %s namespace', $namespace->getRaw()),
+            'fields' => ObjectTypeFields::createByNamespace($typeResolver, $namespace)
         ]);
     }
 
