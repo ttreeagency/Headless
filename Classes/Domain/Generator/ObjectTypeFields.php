@@ -41,7 +41,7 @@ class ObjectTypeFields
      */
     protected $contentNamespace;
 
-    public static function createByPackage(TypeResolver $typeResolver, ContentNamespace $namespace): array
+    public static function createByNamespace(TypeResolver $typeResolver, ContentNamespace $namespace): array
     {
         $self = new ObjectTypeFields();
         $self->contentNamespace = $namespace;
