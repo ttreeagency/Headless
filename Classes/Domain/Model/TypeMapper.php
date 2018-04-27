@@ -23,7 +23,7 @@ final class TypeMapper
             'integer' => Type::int(),
             'boolean' => Type::boolean(),
             'array' => Type::listOf(Type::string()),
-            'DateTime' => new DateTime(),
+            'DateTime' => $typeResolver->get(DateTime::class),
             'Neos\Media\Domain\Model\ImageInterface' => $typeResolver->get(Image::class),
             'Neos\Media\Domain\Model\Asset' => null,
             'array<Neos\Media\Domain\Model\Asset>' => null,
