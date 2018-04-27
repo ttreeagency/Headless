@@ -1,6 +1,6 @@
 <?php
 
-namespace Ttree\Headless\Domain\Generator;
+namespace Ttree\Headless\Domain\Factory;
 
 
 use Neos\ContentRepository\Domain\Model as CR;

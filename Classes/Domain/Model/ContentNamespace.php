@@ -18,7 +18,7 @@ final class ContentNamespace
 
     protected function normalize(string $value): string
     {
-        return \str_replace('.', '', $value);
+        return \str_replace(['.', ':'], ['', '__'], $value);
     }
 
     public function getRaw(): string

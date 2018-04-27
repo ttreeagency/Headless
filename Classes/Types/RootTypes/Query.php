@@ -10,11 +10,11 @@ class Query extends ObjectType
 {
     public function __construct(TypeResolver $typeResolver)
     {
-        $definition = new QueryDefinition($typeResolver);
+        $definition = new QueryDefinition();
         parent::__construct([
             'name' => 'Query',
             'description' => 'Root queries for the Neos Content Repository',
-            'fields' => $definition->fields()
+            'fields' => $definition->fields($typeResolver)
         ]);
     }
 }

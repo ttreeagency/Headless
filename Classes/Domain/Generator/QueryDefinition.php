@@ -5,30 +5,24 @@ namespace Ttree\Headless\Domain\Generator;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Ttree\Headless\Domain\Model\ContentNamespace;
+use Ttree\Headless\Domain\Model\QueryableNodeTypes;
 use Wwwision\GraphQL\TypeResolver;
 use Neos\Flow\Annotations as Flow;
 
 class QueryDefinition
 {
     /**
-     * @var NodeTypeManager
+     * @var QueryableNodeTypes
      * @Flow\Inject
      */
-    protected $nodeTypeManager;
+    protected $queryableNodeTypes;
 
     /**
-     * @var TypeResolver
+     * @var array
      */
-    protected $typeResolver;
-
     protected $fields = [];
 
-    public function __construct(TypeResolver $typeResolver)
-    {
-        $this->typeResolver = $typeResolver;
-    }
-
-    public function fields()
+    public function fields(TypeResolver $typeResolver)
     {
         if ($this->fields !== []) {
             return $this->fields;
@@ -36,23 +30,21 @@ class QueryDefinition
 
         $namespaces = [];
         /** @var NodeType $nodeType */
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
-            if ($nodeType->getName() === 'unstructured') {
+        foreach ($this->queryableNodeTypes->iterate() as $nodeType) {
+            list($namespace) = explode(':', $nodeType->getName());
+            if (isset($namespaces[$namespace])) {
                 continue;
             }
-            list ($nodeTypeNamespace) = \explode(':', $nodeType->getName());
-            if (\in_array($nodeTypeNamespace, $namespaces)) {
-                continue;
-            }
-            $namespaces[] = $nodeTypeNamespace;
+            $namespaces[$namespace] = new ContentNamespace($namespace);
         }
 
+
         $fields = [];
-        foreach ($namespaces as $namespace) {
+        foreach (array_values($namespaces) as $namespace) {
             $fields = \array_merge(QueryField::create(
-                new ContentNamespace($namespace),
-                $this->typeResolver,
-                ObjectType::createByNamespace($this->typeResolver, new ContentNamespace($namespace))
+                $namespace,
+                $typeResolver,
+                ObjectType::createByNamespace($typeResolver, $namespace)
             )->fields(), $fields);
         }
         $this->fields = $fields;

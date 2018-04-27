@@ -19,7 +19,8 @@ final class NodeType
             throw new Exception('Unstructured Node Type can not be used in the GraphQL API', 1510922748);
         }
 
-        list($this->namespace, $this->shortName) = \explode(':', $nodeType->getName());
+        list($this->namespace, $shortName) = \explode(':', $nodeType->getName());
+        $this->shortName = str_replace('.', '', $shortName);
         $this->contentNamespace = new ContentNamespace($this->namespace);
     }
 

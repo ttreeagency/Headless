@@ -8,8 +8,10 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Ttree\Headless\Domain\Factory\NodeFactory;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\Plural;
+use Ttree\Headless\Domain\Model\QueryableNodeTypes;
 use Ttree\Headless\Types\Scalars;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\IterableAccessibleObject;
@@ -25,16 +27,16 @@ class ObjectTypeFields
     protected $contextFactory;
 
     /**
-     * @var NodeTypeManager
+     * @var QueryableNodeTypes
      * @Flow\Inject
      */
-    protected $nodeTypeManager;
+    protected $queryableNodeTypes;
 
     /**
      * @var NodeFactory
      * @Flow\Inject
      */
-    protected $namespacedNodeFactory;
+    protected $nodeFactory;
 
     /**
      * @var ContentNamespace
@@ -50,7 +52,7 @@ class ObjectTypeFields
 
     protected function singleFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
     {
-        $type = $this->namespacedNodeFactory->create($typeResolver, $nodeType);
+        $type = $this->nodeFactory->create($typeResolver, $nodeType);
         return [
             'type' => $type,
             'args' => [
@@ -59,12 +61,12 @@ class ObjectTypeFields
             ],
             'description' => $nodeTypeShortName . ' content type',
             'resolve' => function ($_, array $args) {
-                $defaultContext = $this->contextFactory->create();
-                // todo enfore node type
+                $context = $this->contextFactory->create();
+                //  @todo enfore node type
                 if (isset($args['identifier'])) {
-                    return new AccessibleObject($defaultContext->getNodeByIdentifier($args['identifier']));
+                    return new AccessibleObject($context->getNodeByIdentifier($args['identifier']));
                 } elseif (isset($args['path'])) {
-                    return new AccessibleObject($defaultContext->getNode($args['path']));
+                    return new AccessibleObject($context->getNode($args['path']));
                 }
                 throw new \InvalidArgumentException('node path or identifier have to be specified!', 1460064707);
             }
@@ -75,28 +77,26 @@ class ObjectTypeFields
     {
         $fields = [];
         /** @var NodeType $nodeType */
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
-            if ($nodeType->getName() === 'unstructured') {
+        foreach ($this->queryableNodeTypes->iterate() as $nodeType) {
+            list($namespace, $name) = explode(':', $nodeType->getName());
+            if ($namespace !== $this->contentNamespace->getRaw()) {
                 continue;
             }
-            list ($nodeTypeNamespace, $nodeTypeShortName) = \explode(':', $nodeType->getName());
-            if ($nodeTypeNamespace !== $this->contentNamespace->getRaw()) {
-                continue;
-            }
-            $fields[(string)$nodeTypeShortName] = $this->singleFieldDefinition($typeResolver, $nodeTypeShortName, $nodeType);
-            $fields[$this->allRecordsFieldName($nodeTypeShortName)] = $this->allRecordsFieldDefinition($typeResolver, $nodeTypeShortName, $nodeType);
+            $name = str_replace('.', '', $name);
+            $fields[(string)$name] = $this->singleFieldDefinition($typeResolver, $name, $nodeType);
+            $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($typeResolver, $name, $nodeType);
         }
         return $fields;
     }
 
-    protected function allRecordsFieldName(string $nodeTypeShortName)
+    protected function allRecordsFieldName(string $name)
     {
-        return 'all' . (string)(new Plural($nodeTypeShortName));
+        return 'all' . (string)(new Plural($name));
     }
 
     protected function allRecordsFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
     {
-        $type = $this->namespacedNodeFactory->create($typeResolver, $nodeType);
+        $type = $this->nodeFactory->create($typeResolver, $nodeType);
         return [
             'type' => Type::listOf($type),
             'args' => [
@@ -105,11 +105,13 @@ class ObjectTypeFields
             ],
             'description' => 'All ' . $nodeTypeShortName . 'content types',
             'resolve' => function ($_, array $args) use ($nodeType) {
-                $defaultContext = $this->contextFactory->create();
+                $context = $this->contextFactory->create();
                 if (isset($args['parentIdentifier'])) {
-                    $parentNode = $defaultContext->getNodeByIdentifier($args['parentIdentifier']);
+                    $parentNode = $context->getNodeByIdentifier($args['parentIdentifier']);
+                } elseif (isset($args['parentPath'])) {
+                    $parentNode = $context->getNode($args['parentPath']);
                 } else {
-                    $parentNode = isset($args['parentPath']) ? $defaultContext->getNode($args['parentPath']) : $defaultContext->getRootNode();
+                    $parentNode = $context->getRootNode();
                 }
                 $query = new FlowQuery([$parentNode]);
 
