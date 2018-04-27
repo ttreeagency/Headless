@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace Ttree\Headless\Types;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -14,21 +15,13 @@ use Neos\Media\Domain\Service\ThumbnailService;
 use Ttree\Headless\Domain\Model\TypeMapper;
 use Ttree\Headless\Types\Scalars\DateTime;
 use Wwwision\GraphQL\AccessibleObject;
-use Wwwision\GraphQL\IterableAccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
-use Ttree\Headless\Types\Scalars\AbsoluteNodePath;
 use Ttree\Headless\Types\Scalars\Uuid;
 use Neos\ContentRepository\Domain\Model as CR;
 use Ttree\Headless\Domain\Model as Model;
 
 class Node extends ObjectType
 {
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
     /**
      * @var ThumbnailService
      * @Flow\Inject
