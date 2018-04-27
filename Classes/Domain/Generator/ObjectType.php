@@ -18,7 +18,7 @@ class ObjectType extends \GraphQL\Type\Definition\ObjectType
         ]);
     }
 
-    public static function createByPackage(TypeResolver $typeResolver, ContentNamespace $namespace): ObjectType
+    public static function createByNamespace(TypeResolver $typeResolver, ContentNamespace $namespace): ObjectType
     {
         return new ObjectType($typeResolver, $namespace);
     }

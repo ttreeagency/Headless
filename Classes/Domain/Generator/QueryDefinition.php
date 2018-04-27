@@ -52,7 +52,7 @@ class QueryDefinition
             $fields = \array_merge(QueryField::create(
                 new ContentNamespace($namespace),
                 $this->typeResolver,
-                ObjectType::createByPackage($this->typeResolver, new ContentNamespace($namespace))
+                ObjectType::createByNamespace($this->typeResolver, new ContentNamespace($namespace))
             )->fields(), $fields);
         }
         $this->fields = $fields;
