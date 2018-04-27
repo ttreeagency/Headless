@@ -2,7 +2,11 @@ privilegeTargets:
 
   Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege:
 
-    Ttree.Headless:SimpleGraphiQL:
+    Ttree.Headless:PingEditor:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "Ttree.Headless:Ping"))'
+    Ttree.Headless:PingEndpoint:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "Ttree.Headless:Ping"))'
+    Ttree.Headless:SimpleEditor:
       matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "Ttree.Headless:Simple"))'
     Ttree.Headless:SimpleEndpoint:
       matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "Ttree.Headless:Simple"))'
@@ -15,11 +19,11 @@ roles:
         privilegeTarget: Ttree.Headless:SimpleEndpoint
         permission: GRANT
       -
-        privilegeTarget: Ttree.Headless:SimpleGraphiQL
+        privilegeTarget: Ttree.Headless:SimpleEditor
         permission: GRANT
-
-  Neos.Neos:Editor:
-    privileges:
       -
-        privilegeTarget: Ttree.Headless:SimpleGraphiQL
+        privilegeTarget: Ttree.Headless:PingEndpoint
+        permission: GRANT
+      -
+        privilegeTarget: Ttree.Headless:PingEditor
         permission: GRANT
