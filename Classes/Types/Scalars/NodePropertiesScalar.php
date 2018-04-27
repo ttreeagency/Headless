@@ -24,6 +24,11 @@ class NodePropertiesScalar extends UnstructuredObjectScalar
      */
     public $description = 'Type scalar for node properties';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * @param array $value
      * @return array

@@ -18,6 +18,11 @@ class Url extends ScalarType
      */
     public $description = 'A Url represented as string';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * @param string $value
      * @return string

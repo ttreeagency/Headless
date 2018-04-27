@@ -22,9 +22,6 @@ class RelativeNodePath extends ScalarType
      */
     public $description = 'A relative node path in the form "some/relative/path" (no leading slash)';
 
-    /**
-     * Note: The public constructor is needed because the parent constructor is protected, any other way?
-     */
     public function __construct()
     {
         parent::__construct();

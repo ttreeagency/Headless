@@ -22,9 +22,6 @@ class AbsoluteNodePath extends ScalarType
      */
     public $description = 'An absolute node path in the form "/sites/some-site/some/path" (including leading slash)';
 
-    /**
-     * Note: The public constructor is needed because the parent constructor is protected, any other way?
-     */
     public function __construct()
     {
         parent::__construct();
