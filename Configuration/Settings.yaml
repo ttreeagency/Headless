@@ -8,6 +8,8 @@ Ttree:
 Wwwision:
   GraphQL:
     endpoints:
+      Ttree.Headless:Ping:
+        querySchema: Ttree\Headless\Types\RootTypes\PingQuery
       Ttree.Headless:Simple:
         querySchema: Ttree\Headless\Types\RootTypes\Query
 
