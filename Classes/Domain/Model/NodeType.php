@@ -34,6 +34,16 @@ final class NodeType
         return $this->nodeType->getProperties();
     }
 
+    public function getConfiguration(string $path)
+    {
+        return $this->nodeType->getConfiguration($path);
+    }
+
+    public function getNodeType(): CR\NodeType
+    {
+        return $this->nodeType;
+    }
+
     public function getContentNamespace(): string
     {
         return $this->contentNamespace->getNamespace();
