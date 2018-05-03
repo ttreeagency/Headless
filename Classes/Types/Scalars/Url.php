@@ -1,11 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Types\Scalars;
 
 use GraphQL\Language\AST\Node as AstNode;
 use GraphQL\Language\AST\StringValue;
 use GraphQL\Type\Definition\ScalarType;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 class Url extends ScalarType
 {
     /**

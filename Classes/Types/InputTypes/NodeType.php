@@ -1,17 +1,15 @@
 <?php
+declare(strict_types=1);
+
 namespace Ttree\Headless\Types\InputTypes;
 
 use GraphQL\Language\AST\Node as AstNode;
 use GraphQL\Language\AST\StringValue;
 use GraphQL\Type\Definition\ScalarType;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType as CRNodeType;
-use Neos\ContentRepository\Domain\Service\Context as CRContext;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Ttree\Headless\Types\Scalars\AbsoluteNodePath;
-use Ttree\Headless\Types\Scalars\Uuid;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A node represented by its identifier (UUID) or absolute path

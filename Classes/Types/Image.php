@@ -1,11 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Types;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Ttree\Headless\Types\Scalars;
-use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
 
 final class Image extends ObjectType

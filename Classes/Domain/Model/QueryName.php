@@ -1,10 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Model;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Exception;
-use Neos\Utility\Arrays;
 
 final class QueryName
 {

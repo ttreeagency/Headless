@@ -1,13 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Generator;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Annotations as Flow;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\QueryableNodeTypes;
 use Wwwision\GraphQL\TypeResolver;
-use Neos\Flow\Annotations as Flow;
 
 class QueryDefinition
 {

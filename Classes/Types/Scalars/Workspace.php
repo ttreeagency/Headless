@@ -1,12 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace Ttree\Headless\Types\Scalars;
 
 use GraphQL\Language\AST\Node as AstNode;
 use GraphQL\Language\AST\StringValue;
 use GraphQL\Type\Definition\ScalarType;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace as NeosWorkspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Scalar type wrapper for \Neos\ContentRepository\Domain\Model\Workspace values

@@ -1,11 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Generator;
 
 
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Wwwision\GraphQL\TypeResolver;
-use Neos\Flow\Annotations as Flow;
 
 class ObjectType extends \GraphQL\Type\Definition\ObjectType
 {
@@ -14,7 +14,7 @@ class ObjectType extends \GraphQL\Type\Definition\ObjectType
         return parent::__construct([
             'name' => $namespace->getNamespace() . 'Types',
             'description' => sprintf('Access content type for %s namespace', $namespace->getRaw()),
-            'fields' => ObjectTypeFields::createByNamespace($typeResolver, $namespace)
+            'fields' => (new ObjectTypeFields($typeResolver, $namespace))->fields()
         ]);
     }
 

@@ -6,11 +6,10 @@ namespace Ttree\Headless\CustomType;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Ttree\Headless\CustomType\CustomFieldInterface;
+use Neos\Flow\Annotations as Flow;
+use Ttree\Headless\Types\Scalars;
 use Wwwision\GraphQL\IterableAccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
-use Ttree\Headless\Types\Scalars;
-use Neos\Flow\Annotations as Flow;
 
 class AllNodeCustomField implements CustomFieldInterface
 {

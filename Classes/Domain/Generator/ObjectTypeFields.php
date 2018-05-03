@@ -1,31 +1,23 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Generator;
 
 
 use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\ContextFactory;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Ttree\Headless\Domain\Factory\NodeFactory;
+use Neos\Flow\Annotations as Flow;
+use Ttree\Headless\CustomType\AllNodeCustomField;
+use Ttree\Headless\CustomType\CustomFieldInterface;
+use Ttree\Headless\CustomType\NodeCustomField;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\Plural;
 use Ttree\Headless\Domain\Model\QueryableNodeTypes;
-use Ttree\Headless\Types\Scalars;
-use Wwwision\GraphQL\AccessibleObject;
-use Wwwision\GraphQL\IterableAccessibleObject;
+use Ttree\Headless\Types\Node;
 use Wwwision\GraphQL\TypeResolver;
-use Neos\Flow\Annotations as Flow;
 
 class ObjectTypeFields
 {
-    /**
-     * @var ContextFactory
-     * @Flow\Inject
-     */
-    protected $contextFactory;
-
     /**
      * @var QueryableNodeTypes
      * @Flow\Inject
@@ -33,47 +25,22 @@ class ObjectTypeFields
     protected $queryableNodeTypes;
 
     /**
-     * @var NodeFactory
-     * @Flow\Inject
-     */
-    protected $nodeFactory;
-
-    /**
      * @var ContentNamespace
      */
     protected $contentNamespace;
 
-    public static function createByNamespace(TypeResolver $typeResolver, ContentNamespace $namespace): array
+    /**
+     * @var TypeResolver
+     */
+    protected $typeResolver;
+
+    public function __construct(TypeResolver $typeResolver, ContentNamespace $namespace)
     {
-        $self = new ObjectTypeFields();
-        $self->contentNamespace = $namespace;
-        return $self->fields($typeResolver);
+        $this->contentNamespace = $namespace;
+        $this->typeResolver = $typeResolver;
     }
 
-    protected function singleFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
-    {
-        $type = $this->nodeFactory->create($typeResolver, $nodeType);
-        return [
-            'type' => $type,
-            'args' => [
-                'identifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
-                'path' => ['type' => $typeResolver->get(Scalars\AbsoluteNodePath::class)],
-            ],
-            'description' => $nodeTypeShortName . ' content type',
-            'resolve' => function ($_, array $args) {
-                $context = $this->contextFactory->create();
-                //  @todo enfore node type
-                if (isset($args['identifier'])) {
-                    return new AccessibleObject($context->getNodeByIdentifier($args['identifier']));
-                } elseif (isset($args['path'])) {
-                    return new AccessibleObject($context->getNode($args['path']));
-                }
-                throw new \InvalidArgumentException('node path or identifier have to be specified!', 1460064707);
-            }
-        ];
-    }
-
-    protected function fields(TypeResolver $typeResolver)
+    public function fields()
     {
         $fields = [];
         /** @var NodeType $nodeType */
@@ -83,10 +50,26 @@ class ObjectTypeFields
                 continue;
             }
             $name = str_replace('.', '', $name);
-            $fields[(string)$name] = $this->singleFieldDefinition($typeResolver, $name, $nodeType);
-            $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($typeResolver, $name, $nodeType);
+            $fields[$this->singleRecordFieldName($name)] = $this->singleFieldDefinition($this->typeResolver, $name, $nodeType);
+            $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($this->typeResolver, $name, $nodeType);
+            // todo add support for custom fields
         }
         return $fields;
+    }
+
+    protected function singleRecordFieldName(string $name)
+    {
+        return $name;
+    }
+
+    protected function singleFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
+    {
+        $type = $typeResolver->get([Node::class, $nodeType->getName()], $nodeType);
+
+        /** @var CustomFieldInterface $customType */
+        $customType = new NodeCustomField();
+
+        return $this->type($customType, $type, $typeResolver, $nodeTypeShortName, $nodeType);
     }
 
     protected function allRecordsFieldName(string $name)
@@ -96,27 +79,30 @@ class ObjectTypeFields
 
     protected function allRecordsFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
     {
-        $type = $this->nodeFactory->create($typeResolver, $nodeType);
-        return [
-            'type' => Type::listOf($type),
-            'args' => [
-                'parentIdentifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
-                'parentPath' => ['type' => $typeResolver->get(Scalars\AbsoluteNodePath::class)],
-            ],
-            'description' => 'All ' . $nodeTypeShortName . 'content types',
-            'resolve' => function ($_, array $args) use ($nodeType) {
-                $context = $this->contextFactory->create();
-                if (isset($args['parentIdentifier'])) {
-                    $parentNode = $context->getNodeByIdentifier($args['parentIdentifier']);
-                } elseif (isset($args['parentPath'])) {
-                    $parentNode = $context->getNode($args['parentPath']);
-                } else {
-                    $parentNode = $context->getRootNode();
-                }
-                $query = new FlowQuery([$parentNode]);
+        $type = $typeResolver->get([Node::class, $nodeType->getName()], $nodeType);
 
-                return new IterableAccessibleObject($query->find('[instanceof ' . $nodeType->getName() . ']')->get());
-            }
+        $typeClassName = $this->getTypeImplementation($nodeType, 'all');
+        /** @var CustomFieldInterface $customType */
+        $customType = new $typeClassName;
+
+        return $this->type($customType, Type::listOf($type), $typeResolver, $nodeTypeShortName, $nodeType);
+    }
+
+    protected function type(CustomFieldInterface $customType, $type, TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)
+    {
+        return [
+            'type' => $type,
+            'args' => $customType->args($typeResolver),
+            'description' => $customType->description($nodeType),
+            'resolve' => $customType->resolve($nodeType)
         ];
+    }
+
+    protected function getTypeImplementation(NodeType $nodeType, string $presetName): ?string {
+        $implementation = $nodeType->getConfiguration('options.Ttree:Headless.fields.' . $presetName . '.implementation');
+        if ($implementation === null) {
+            return AllNodeCustomField::class;
+        }
+        return $implementation;
     }
 }

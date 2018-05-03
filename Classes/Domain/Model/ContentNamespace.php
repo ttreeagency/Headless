@@ -1,8 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Model;
-
-use Neos\Flow\Exception;
 
 final class ContentNamespace
 {

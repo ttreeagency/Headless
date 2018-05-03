@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
+
 namespace Ttree\Headless\Types\InputTypes;
 
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
 use Wwwision\GraphQL\TypeResolver;
-use Ttree\Headless\Types\Scalars;
 
 class Package extends InputObjectType
 {

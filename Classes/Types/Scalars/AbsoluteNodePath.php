@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Ttree\Headless\Types\Scalars;
 
 use GraphQL\Language\AST\Node as AstNode;
@@ -8,6 +10,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Represents an absolute node path in the form "/sites/some-site/some/path" (including leading slash)
+ *
+ * @Flow\Proxy(false)
  */
 class AbsoluteNodePath extends ScalarType
 {

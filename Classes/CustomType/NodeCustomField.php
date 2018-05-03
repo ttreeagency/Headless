@@ -5,11 +5,10 @@ namespace Ttree\Headless\CustomType;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
-use Ttree\Headless\CustomType\CustomFieldInterface;
+use Neos\Flow\Annotations as Flow;
+use Ttree\Headless\Types\Scalars;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
-use Ttree\Headless\Types\Scalars;
-use Neos\Flow\Annotations as Flow;
 
 class NodeCustomField implements CustomFieldInterface
 {
@@ -34,7 +33,7 @@ class NodeCustomField implements CustomFieldInterface
 
     public function resolve(NodeType $nodeType): \Closure
     {
-        return function ($_, array $args) {
+        return function ($_, array $args) use ($nodeType) {
             $context = $this->contextFactory->create();
             //  @todo enfore node type
             if (isset($args['identifier'])) {

@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Model;
 
-use Neos\Flow\Exception;
 use Neos\ContentRepository\Domain\Model as CR;
+use Neos\Flow\Exception;
 
 final class NodeType
 {

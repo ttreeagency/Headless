@@ -10,37 +10,59 @@ took a lots of inspiration from the Simple API of [GraphCMS](https://graphcms.co
 ## Goals
 
 The goal of the package is to create a Domain centric GraphQL API. The queries/mutations semantics are automatically
-generated from Node Types definitions and currently look like:
+generated from Node Types definitions, but can be customized, and currently look like:
 
 ```
-{
-  NeosNeosNamespace {
-    allShortcuts {
+query ($parentIdentifier: UUID!) {
+  MedialibCoreNamespace {
+    activeChannel: DocumentChannel(identifier: $parentIdentifier) {
+      title
       id
-      createdAt
-      updatedAt
-      title
-      targetMode
-      target
     }
-  }
-  NeosDemoNamespace {
-    Chapter(identifier: "23f35ab0-0d82-21e7-0006-dd63c5b3dce8") {
+    subChannels: allDocumentChannels(parentIdentifier: $parentIdentifier) {
       title
-    }
-    allChapters {
       id
-      title
-      chapterDescription
     }
-    allHomepages {
+    videos: allDocumentVideos(parentIdentifier: $parentIdentifier) {
       title
-      layout
-      subpageLayout
+      id
+    }
+    suggestedChannels: allDocumentChannels {
+      title
+      id
     }
   }
 }
 ```
+
+## How to expose your NodeType in the API
+
+You need to use the abstract node type `Ttree.Headless:Queryable` as a super type of your node type. With this 
+configuration in place the package create for you. By example is you have a node type `Your.Package:Document`:
+ 
+ - a namespace `YourPackage` (your package key, without the dots). _Warning_: Not sure to keep this concept in the futur, 
+ maybe the query will be prefixed by the namepace to make it more easy to use.
+ - a query to get a single node `Document`. This query accept `identifier` or `path` and return a single node.
+ - a query to get all nodes `allDocuments`. This query accept `parentIdentifier` or `parentPath` and return a collection
+ of nodes.
+
+## How to use a custom type ?
+
+You can customize the automatically created query, by registring custom types, edit your `NodeTypes.yaml`:
+
+```yaml
+Your.Package:Document:
+  options:
+    TtreeHeadless:
+      fields:
+        all:
+          implementation: YourPackage\CustomType\AllDocumentCustomType
+        single:
+          implementation: YourPackage\CustomType\SingleDocumentCustomType
+```
+
+You must implement the `CustomTypeInterface`, check `Ttree\Headless\CustomType\AllNodeCustomType` and 
+`Ttree\Headless\CustomType\AllNodeCustomType` to learn more.
 
 ## System Property
 
@@ -55,6 +77,7 @@ The initial goal is to have a read only API, the next step will to add mutation 
 #### 1.0
 
 - [x] Automatic query generation based on the node configuration
+- [ ] Custom type configuration
 - [ ] Image support
 - [ ] Asset(s) support
 - [ ] Reference(s) support

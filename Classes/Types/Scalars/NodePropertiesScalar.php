@@ -1,16 +1,16 @@
 <?php
+declare(strict_types=1);
+
 namespace Ttree\Headless\Types\Scalars;
 
-use GraphQL\Language\AST\Node as AstNode;
-use GraphQL\Language\AST\StringValue;
-use GraphQL\Type\Definition\ScalarType;
-use Neos\Flow\Annotations as Flow;
-use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Wwwision\GraphQL\IterableAccessibleObject;
+use Neos\Media\Domain\Model\ResourceBasedInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Type scalar for unknown structures (represented as JSON object)
+ *
+ * @Flow\Proxy(false)
  */
 class NodePropertiesScalar extends UnstructuredObjectScalar
 {
