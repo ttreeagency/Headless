@@ -15,7 +15,7 @@ took a lots of inspiration from the Simple API of [GraphCMS](https://graphcms.co
 For an internal project, we need to have a flexible distribution for Neos, that allow client to select different features (Package),
 each package should register in the API based on basic conventions.
 
-![API Sample in GraphQLi][Documentation/api-sample.png]
+![API Sample in GraphQLi](Documentation/api-sample.png)
 
 ## Goals
 
