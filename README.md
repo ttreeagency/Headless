@@ -135,8 +135,8 @@ The initial goal is to have a read only API, the next step will to add mutation 
 #### 1.0
 
 - [x] Automatic query generation based on the node configuration
-- [ ] Custom type configuration
-- [ ] Image support
+- [x] Custom type configuration
+- [x] Image support
 - [ ] Asset(s) support
 - [ ] Reference(s) support
 - [ ] Pagination support
@@ -146,12 +146,13 @@ The initial goal is to have a read only API, the next step will to add mutation 
 #### 1.2
 
 - [ ] Management of `Permanent Auth Token` to access to API
-- [ ] An API to register custom query generation per node type
+- [x] An API to register custom query per node type
 
 #### 2.0
 
 - [ ] Intelligent cache layer with auto flushing
 - [ ] Automatic mutations generation based on the node configuration
+- [ ] An API to register custom mutation per node type
 - [ ] An API to register custom query not directly attached to a node type
 
 #### 3.0
