@@ -40,7 +40,7 @@ class ObjectTypeFields
         $this->typeResolver = $typeResolver;
     }
 
-    public function fields()
+    public function definition()
     {
         $fields = [];
         /** @var NodeType $nodeType */
@@ -54,7 +54,14 @@ class ObjectTypeFields
             $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($this->typeResolver, $name, $nodeType);
             // todo add support for custom fields
         }
-        return $fields;
+
+        $definitionList = [];
+        foreach ($fields as $name => $definition) {
+            $definition['name'] = $name;
+            $definitionList[] = $definition;
+        }
+
+        return $definitionList;
     }
 
     protected function singleRecordFieldName(string $name)

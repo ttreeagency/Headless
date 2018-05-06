@@ -14,8 +14,9 @@ class QueryField
     public function __construct(ContentNamespace $namespace, TypeResolver $typeResolver, ObjectType $type)
     {
         $this->fields = [
-            $namespace->getNamespace() . 'Namespace' => [
+            $namespace->getNamespace() => [
                 'type' => $type,
+                'description' => 'Foo',
                 'resolve' => function () use ($namespace) {
                     return $namespace->getRaw();
                 },

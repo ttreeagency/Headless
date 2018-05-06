@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace Ttree\Headless\Types;
 
 use GraphQL\Type\Definition\ObjectType;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Media\Domain\Service\ThumbnailService;
 use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model as CR;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Media\Domain\Service\ThumbnailService;
 use Ttree\Headless\CustomType\CustomFieldInterface;
 use Ttree\Headless\CustomType\CustomFieldTypeInterface;
 use Ttree\Headless\Domain\Model as Model;

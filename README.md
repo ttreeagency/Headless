@@ -24,24 +24,22 @@ generated from Node Types definitions, but can be customized, and currently look
 
 ```
 query ($parentIdentifier: UUID!) {
-  MedialibCoreNamespace {
-    activeChannel: DocumentChannel(identifier: $parentIdentifier) {
-      title
-      id
-    }
-    subChannels: allDocumentChannels(parentIdentifier: $parentIdentifier) {
-      title
-      id
-    }
-    videos: allDocumentVideos(parentIdentifier: $parentIdentifier) {
-      title
-      id
-    }
-    suggestedChannels: allDocumentChannels {
-      title
-      id
-    }
-  }
+	activeChannel: DocumentChannel(identifier: $parentIdentifier) {
+	  title
+	  id
+	}
+	subChannels: allDocumentChannels(parentIdentifier: $parentIdentifier) {
+	  title
+	  id
+	}
+	videos: allDocumentVideos(parentIdentifier: $parentIdentifier) {
+	  title
+	  id
+	}
+	suggestedChannels: allDocumentChannels {
+	  title
+	  id
+	}
 }
 ```
 
@@ -50,8 +48,6 @@ query ($parentIdentifier: UUID!) {
 You need to use the abstract node type `Ttree.Headless:Queryable` as a super type of your node type. With this 
 configuration in place the package create for you, if you have a node type `Your.Package:Document`:
  
- - a namespace `YourPackage` (your package key, without the dots). _Warning_: Not sure to keep this concept in the futur, 
- maybe the query will be prefixed by the namepace to make it more easy to use.
  - a query to get a single node `Document`. This query accept `identifier` or `path` and return a single node.
  - a query to get all nodes `allDocuments`. This query accept `parentIdentifier` or `parentPath` and return a collection
  of nodes.

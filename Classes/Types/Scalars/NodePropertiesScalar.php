@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Ttree\Headless\Types\Scalars;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Media\Domain\Model\ResourceBasedInterface;
 
 /**
  * Type scalar for unknown structures (represented as JSON object)
