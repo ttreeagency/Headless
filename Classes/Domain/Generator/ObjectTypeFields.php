@@ -13,6 +13,7 @@ use Ttree\Headless\CustomType\NodeCustomField;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\Plural;
 use Ttree\Headless\Domain\Model\QueryableNodeTypes;
+use Ttree\Headless\Domain\Model\FieldType;
 use Ttree\Headless\Types\Node;
 use Wwwision\GraphQL\TypeResolver;
 
@@ -45,11 +46,11 @@ class ObjectTypeFields
         $fields = [];
         /** @var NodeType $nodeType */
         foreach ($this->queryableNodeTypes->iterate() as $nodeType) {
-            list($namespace, $name) = explode(':', $nodeType->getName());
+            list($namespace) = explode(':', $nodeType->getName());
             if ($namespace !== $this->contentNamespace->getRaw()) {
                 continue;
             }
-            $name = str_replace('.', '', $name);
+            $name = FieldType::createFromNodeType($nodeType)->getName();
             $fields[$this->singleRecordFieldName($name)] = $this->singleFieldDefinition($this->typeResolver, $name, $nodeType);
             $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($this->typeResolver, $name, $nodeType);
             // todo add support for custom fields

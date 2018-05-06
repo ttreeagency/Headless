@@ -48,7 +48,7 @@ class Node extends ObjectType
         $this->prepareCustomPropertiesDefinition($typeResolver, $nodeType, $fields);
 
         $config = [
-            'name' => $nodeType->getFqdnContentName(),
+            'name' => $nodeType->getTypeName(),
             // todo add support to have a node type description in YAML
             'description' => $nodeType->getName(),
             'fields' => $fields,

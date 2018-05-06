@@ -56,7 +56,7 @@ class NodeFactory
         $this->prepareCustomPropertiesDefinition($typeResolver, $nodeType, $fields);
 
         $this->cache[$name] = new Node([
-            'name' => $nodeType->getFqdnContentName(),
+            'name' => $nodeType->getTypeName(),
             // todo add support to have a node type description in YAML
             'description' => $nodeType->getName(),
             'fields' => $fields,

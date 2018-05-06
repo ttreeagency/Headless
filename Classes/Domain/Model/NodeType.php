@@ -50,7 +50,7 @@ final class NodeType
         return $this->contentNamespace->getNamespace();
     }
 
-    public function getFqdnContentName(): string
+    public function getTypeName(): string
     {
         return $this->contentNamespace->getNamespace() . $this->shortName;
     }
