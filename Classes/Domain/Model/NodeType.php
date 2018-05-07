@@ -52,6 +52,6 @@ final class NodeType
 
     public function getTypeName(): string
     {
-        return $this->contentNamespace->getNamespace() . $this->shortName;
+        return FieldType::createFromNodeType($this->nodeType)->getName();
     }
 }
