@@ -1,2 +1,5 @@
 Ttree.Headless:Queryable:
   abstract: true
+
+Ttree.Headless:Interface:
+  abstract: true

@@ -6,7 +6,7 @@ namespace Ttree\Headless\Domain\Model;
 use Neos\ContentRepository\Domain\Model as CR;
 use Neos\Flow\Exception;
 
-final class NodeType
+final class NodeTypeWrapper
 {
     protected $nodeType;
     protected $namespace;
@@ -22,7 +22,7 @@ final class NodeType
 
         list($this->namespace, $shortName) = \explode(':', $nodeType->getName());
         $this->shortName = str_replace('.', '', $shortName);
-        $this->contentNamespace = new ContentNamespace($this->namespace);
+        $this->contentNamespace = ContentNamespace::createFromNodeType($nodeType);
     }
 
     public function getName(): string
