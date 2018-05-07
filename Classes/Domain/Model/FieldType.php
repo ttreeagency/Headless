@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Model;
 
-use Neos\Flow\Exception;
 use Neos\ContentRepository\Domain\Model as CR;
 
 final class FieldType

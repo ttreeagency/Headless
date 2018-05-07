@@ -11,9 +11,9 @@ use Ttree\Headless\CustomType\AllNodeCustomField;
 use Ttree\Headless\CustomType\CustomFieldInterface;
 use Ttree\Headless\CustomType\NodeCustomField;
 use Ttree\Headless\Domain\Model\ContentNamespace;
+use Ttree\Headless\Domain\Model\FieldType;
 use Ttree\Headless\Domain\Model\Plural;
 use Ttree\Headless\Domain\Model\QueryableNodeTypes;
-use Ttree\Headless\Domain\Model\FieldType;
 use Ttree\Headless\Types\Node;
 use Wwwision\GraphQL\TypeResolver;
 
@@ -107,10 +107,10 @@ class ObjectTypeFields
     }
 
     protected function getTypeImplementation(NodeType $nodeType, string $presetName): ?string {
-        $implementation = $nodeType->getConfiguration('options.Ttree:Headless.fields.' . $presetName . '.implementation');
-        if ($implementation === null) {
+        $className = $nodeType->getConfiguration('options.Ttree:Headless.fields.' . $presetName . '.class');
+        if ($className === null) {
             return AllNodeCustomField::class;
         }
-        return $implementation;
+        return $className;
     }
 }

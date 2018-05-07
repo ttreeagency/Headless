@@ -140,12 +140,12 @@ class Node extends ObjectType
 
     protected function prepareCustomPropertyDefinition(TypeResolver $typeResolver, Model\NodeType $nodeType, string $propertyName, array $configuration)
     {
-        /** @var CustomFieldTypeInterface|CustomFieldInterface $customType */
-        $customType = new $configuration['implementation'];
+        /** @var CustomFieldTypeInterface|CustomFieldInterface $className */
+        $className = new $configuration['class'];
         return [
-            'type' => $customType->type($typeResolver, $nodeType->getNodeType()),
-            'description' => $customType->description($nodeType->getNodeType()),
-            'resolve' => $customType->resolve($nodeType->getNodeType())
+            'type' => $className->type($typeResolver, $nodeType->getNodeType()),
+            'description' => $className->description($nodeType->getNodeType()),
+            'resolve' => $className->resolve($nodeType->getNodeType())
         ];
     }
 
