@@ -7,7 +7,7 @@ use GraphQL\Type\Definition\ObjectType;
 use Neos\ContentRepository\Domain\Model as CR;
 use Neos\Flow\Exception;
 use Ttree\Headless\Domain\Model as Model;
-use Ttree\Headless\Service\NodeInterfaceService;
+use Ttree\Headless\Service\InterfaceRegistry;
 use Wwwision\GraphQL\TypeResolver;
 use Neos\Flow\Annotations as Flow;
 
@@ -16,7 +16,7 @@ class Node extends ObjectType
     use NodeTrait;
 
     /**
-     * @var NodeInterfaceService
+     * @var InterfaceRegistry
      * @Flow\Inject
      */
     protected $interfaceService;

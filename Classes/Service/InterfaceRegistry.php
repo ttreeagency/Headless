@@ -11,7 +11,7 @@ use Wwwision\GraphQL\TypeResolver;
 /**
  * @Flow\Scope("singleton")
  */
-final class NodeInterfaceService
+final class InterfaceRegistry
 {
     protected $interfaces = [];
 

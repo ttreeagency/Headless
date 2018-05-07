@@ -25,16 +25,14 @@ class NodeInterface extends InterfaceType
      */
     public function __construct(TypeResolver $typeResolver, CR\NodeType $nodeType)
     {
-        $nodeType = new Model\NodeTypeWrapper($nodeType);
+        $nodeTypeWrapper = new Model\NodeTypeWrapper($nodeType);
 
-        $fields = $this->prepareSystemPropertiesDefinition($typeResolver);
-        $this->preparePropertiesDefinition($typeResolver, $nodeType, $fields);
-        $this->prepareCustomPropertiesDefinition($typeResolver, $nodeType, $fields);
+        $fields = $this->fields($typeResolver, $nodeTypeWrapper);
 
         $config = [
-            'name' => $nodeType->getTypeName(),
+            'name' => $nodeTypeWrapper->getTypeName(),
             // todo add support to have a node type description in YAML
-            'description' => $nodeType->getName(),
+            'description' => $nodeTypeWrapper->getName(),
             'fields' => $fields,
         ];
 

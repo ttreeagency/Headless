@@ -1,3 +1,7 @@
+Ttree:
+  Headless:
+    unionTypes: []
+
 Wwwision:
   GraphQL:
     endpoints:
