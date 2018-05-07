@@ -14,8 +14,8 @@ class UnionType extends Definition\UnionType
         parent::__construct([
             'name' => $name,
             'description' => $configuration['description'],
-            'types' => array_map(function (CR\NodeType $nodeTypeName) use ($typeResolver) {
-                return $typeResolver->get(Node::class, $nodeTypeName);
+            'types' => array_map(function (CR\NodeType $nodeType) use ($typeResolver) {
+                return $typeResolver->get([ Node::class, $nodeType->getName() ], $nodeType);
             }, $configuration['types']),
         ]);
     }
