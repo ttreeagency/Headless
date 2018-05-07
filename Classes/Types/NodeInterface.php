@@ -57,13 +57,13 @@ class NodeInterface extends InterfaceType
         ];
     }
 
-    protected function prepareCustomPropertyDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeType, string $propertyName, array $configuration): array
+    protected function prepareCustomPropertyDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, string $propertyName, array $configuration): array
     {
         /** @var CustomFieldTypeInterface|CustomFieldInterface $className */
         $className = new $configuration['class'];
         return [
-            'type' => $className->type($typeResolver, $nodeType->getNodeType()),
-            'description' => $className->description($nodeType->getNodeType())
+            'type' => $className->type($typeResolver, $nodeTypeWrapper->getNodeType()),
+            'description' => $className->description($nodeTypeWrapper->getNodeType())
         ];
     }
 

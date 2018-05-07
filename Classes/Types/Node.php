@@ -26,9 +26,9 @@ class Node extends ObjectType
      * @param CR\NodeType $nodeTypeWrapper
      * @throws Exception
      */
-    public function __construct(TypeResolver $typeResolver, CR\NodeType $nodeTypeWrapper)
+    public function __construct(TypeResolver $typeResolver, CR\NodeType $nodeType)
     {
-        $nodeTypeWrapper = new Model\NodeTypeWrapper($nodeTypeWrapper);
+        $nodeTypeWrapper = new Model\NodeTypeWrapper($nodeType);
 
         parent::__construct([
             'name' => $nodeTypeWrapper->getTypeName(),

@@ -31,11 +31,11 @@ trait NodeTrait
      */
     protected $resourceManager;
 
-    protected function fields(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeType): array
+    protected function fields(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper): array
     {
         $fields = $this->prepareSystemPropertiesDefinition($typeResolver);
-        $fields = $this->preparePropertiesDefinition($typeResolver, $nodeType, $fields);
-        $fields = $this->prepareCustomPropertiesDefinition($typeResolver, $nodeType, $fields);
+        $fields = $this->preparePropertiesDefinition($typeResolver, $nodeTypeWrapper, $fields);
+        $fields = $this->prepareCustomPropertiesDefinition($typeResolver, $nodeTypeWrapper, $fields);
         return $fields;
     }
 
@@ -72,9 +72,9 @@ trait NodeTrait
         ];
     }
 
-    protected function preparePropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeType, array $fields): array
+    protected function preparePropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
     {
-        foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
+        foreach ($nodeTypeWrapper->getProperties() as $propertyName => $propertyConfiguration) {
             if (!isset($propertyConfiguration['type']) || $propertyName[0] === '_') {
                 continue;
             }
@@ -113,23 +113,24 @@ trait NodeTrait
         return $fields;
     }
 
-    protected function prepareCustomPropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeType, array $fields): array
+    protected function prepareCustomPropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
     {
-        $customProperties = $nodeType->getConfiguration('options.Ttree:Headless.properties') ?: [];
+        $customProperties = $nodeTypeWrapper->getConfiguration('options.Ttree:Headless.properties') ?: [];
         foreach ($customProperties as $propertyName => $propertyConfiguration) {
-            $fields[$propertyName] = $this->prepareCustomPropertyDefinition($typeResolver, $nodeType, $propertyName, $propertyConfiguration);
+            $fields[$propertyName] = $this->prepareCustomPropertyDefinition($typeResolver, $nodeTypeWrapper, $propertyName, $propertyConfiguration);
         }
         return $fields;
     }
 
-    protected function prepareCustomPropertyDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeType, string $propertyName, array $configuration): array
+    protected function prepareCustomPropertyDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, string $propertyName, array $configuration): array
     {
         /** @var CustomFieldTypeInterface|CustomFieldInterface $className */
         $className = new $configuration['class'];
         return [
-            'type' => $className->type($typeResolver, $nodeType->getNodeType()),
-            'description' => $className->description($nodeType->getNodeType()),
-            'resolve' => $className->resolve($nodeType->getNodeType())
+            'type' => $className->type($typeResolver, $nodeTypeWrapper->getNodeType()),
+            'args' => $className->args($typeResolver),
+            'description' => $className->description($nodeTypeWrapper->getNodeType()),
+            'resolve' => $className->resolve($nodeTypeWrapper->getNodeType())
         ];
     }
 
