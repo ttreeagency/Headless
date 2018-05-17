@@ -17,10 +17,10 @@ final class Image extends ObjectType
             'name' => 'Image',
             'description' => 'Representation of a binary image with thumbnail',
             'fields' => [
-                'url' => ['type' => $typeResolver->get(Scalars\Url::class)],
-                'width' => ['type' => Type::int()],
-                'height' => ['type' => Type::int()],
-                'orientation' => ['type' => Type::string()]
+                'url' => ['type' => Type::nonNull($typeResolver->get(Scalars\Url::class))],
+                'width' => ['type' => Type::nonNull(Type::int())],
+                'height' => ['type' => Type::nonNull(Type::int())],
+                'orientation' => ['type' => Type::nonNull(Type::string())]
             ],
         ]);
     }
