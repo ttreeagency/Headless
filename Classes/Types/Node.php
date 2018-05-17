@@ -21,11 +21,6 @@ class Node extends ObjectType
      */
     protected $interfaceService;
 
-    /**
-     * @param TypeResolver $typeResolver
-     * @param CR\NodeType $nodeTypeWrapper
-     * @throws Exception
-     */
     public function __construct(TypeResolver $typeResolver, CR\NodeType $nodeType)
     {
         $nodeTypeWrapper = new Model\NodeTypeWrapper($nodeType);
