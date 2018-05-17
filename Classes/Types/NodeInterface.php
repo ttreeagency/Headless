@@ -34,6 +34,10 @@ class NodeInterface extends InterfaceType
             // todo add support to have a node type description in YAML
             'description' => $nodeTypeWrapper->getName(),
             'fields' => $fields,
+            'resolveType' => function (AccessibleObject $wrappedObject) use ($typeResolver) {
+                $node = $wrappedObject->getObject();
+                return $typeResolver->get([Node::class, $node->getNodeType()->getName()], $node->getNodeType());
+            }
         ];
 
         parent::__construct($config);
