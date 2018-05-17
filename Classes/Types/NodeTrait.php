@@ -43,7 +43,7 @@ trait NodeTrait
     {
         return [
             'id' => [
-                'type' => $typeResolver->get(Uuid::class),
+                'type' => Type::nonNull($typeResolver->get(Uuid::class)),
                 'description' => 'The identifier of this node',
                 'resolve' => function (AccessibleObject $wrappedNode) {
                     /** @var CR\NodeInterface $node */
@@ -52,7 +52,7 @@ trait NodeTrait
                 }
             ],
             'createdAt' => [
-                'type' => $typeResolver->get(DateTime::class),
+                'type' => Type::nonNull($typeResolver->get(DateTime::class)),
                 'description' => 'The creation date of the current node',
                 'resolve' => function (AccessibleObject $wrappedNode) {
                     /** @var CR\NodeInterface $node */
@@ -61,7 +61,7 @@ trait NodeTrait
                 }
             ],
             'updatedAt' => [
-                'type' => $typeResolver->get(DateTime::class),
+                'type' => Type::nonNull($typeResolver->get(DateTime::class)),
                 'description' => 'The last modification date of the current node',
                 'resolve' => function (AccessibleObject $wrappedNode) {
                     /** @var CR\NodeInterface $node */

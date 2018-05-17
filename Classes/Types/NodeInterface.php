@@ -47,15 +47,15 @@ class NodeInterface extends InterfaceType
     {
         return [
             'id' => [
-                'type' => $typeResolver->get(Uuid::class),
+                'type' => Type::nonNull($typeResolver->get(Uuid::class)),
                 'description' => 'The identifier of this node (not the technical id)'
             ],
             'createdAt' => [
-                'type' => $typeResolver->get(DateTime::class),
+                'type' => Type::nonNull($typeResolver->get(DateTime::class)),
                 'description' => 'The identifier of this node (not the technical id)'
             ],
             'updatedAt' => [
-                'type' => $typeResolver->get(DateTime::class),
+                'type' => Type::nonNull($typeResolver->get(DateTime::class)),
                 'description' => 'The identifier of this node (not the technical id)'
             ],
         ];
