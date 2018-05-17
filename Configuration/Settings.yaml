@@ -5,9 +5,7 @@ Ttree:
 Wwwision:
   GraphQL:
     endpoints:
-      Ttree.Headless:Ping:
-        querySchema: Ttree\Headless\Types\RootTypes\PingQuery
-      Ttree.Headless:Simple:
+      'api/content':
         querySchema: Ttree\Headless\Types\RootTypes\Query
 
 Neos:

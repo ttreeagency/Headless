@@ -1,29 +1,18 @@
 privilegeTargets:
 
   Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege:
-
-    Ttree.Headless:PingEditor:
-      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "Ttree.Headless:Ping"))'
-    Ttree.Headless:PingEndpoint:
-      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "Ttree.Headless:Ping"))'
-    Ttree.Headless:SimpleEditor:
-      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "Ttree.Headless:Simple"))'
-    Ttree.Headless:SimpleEndpoint:
-      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "Ttree.Headless:Simple"))'
+    Ttree.Headless:ContentGraphQlPlayground:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->indexAction(endpoint == "api/content"))'
+    Ttree.Headless:ContentGraphQl:
+      matcher: 'method(Wwwision\GraphQL\Controller\StandardController->queryAction(endpoint == "api/content"))'
 
 roles:
 
   Neos.Flow:Everybody:
     privileges:
       -
-        privilegeTarget: Ttree.Headless:SimpleEndpoint
+        privilegeTarget: Ttree.Headless:ContentGraphQlPlayground
         permission: GRANT
       -
-        privilegeTarget: Ttree.Headless:SimpleEditor
-        permission: GRANT
-      -
-        privilegeTarget: Ttree.Headless:PingEndpoint
-        permission: GRANT
-      -
-        privilegeTarget: Ttree.Headless:PingEditor
+        privilegeTarget: Ttree.Headless:ContentGraphQl
         permission: GRANT
