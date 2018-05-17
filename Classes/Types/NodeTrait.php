@@ -159,8 +159,16 @@ trait NodeTrait
                 'maximumWidth' => ['type' => Type::int(), 'description' => 'Desired maximum width of the image'],
                 'height' => ['type' => Type::int(), 'description' => 'Desired height of the image'],
                 'maximumHeight' => ['type' => Type::int(), 'description' => 'Desired maximum height of the image'],
-                'allowCropping' => ['type' => Type::boolean(), 'description' => 'Whether the image should be cropped if the given sizes would hurt the aspect ratio'],
-                'allowUpScaling' => ['type' => Type::boolean(), 'description' => 'Whether the resulting image size might exceed the size of the original image'],
+                'allowCropping' => [
+                    'type' => Type::boolean(),
+                    'defaultValue' => false,
+                    'description' => 'Whether the image should be cropped if the given sizes would hurt the aspect ratio'
+                ],
+                'allowUpScaling' => [
+                    'type' => Type::boolean(),
+                    'defaultValue' => false,
+                    'description' => 'Whether the resulting image size might exceed the size of the original image'
+                ],
             ],
             'resolve' => function (AccessibleObject $wrappedNode, array $args) use ($propertyName) {
                 /** @var CR\NodeInterface $node */
