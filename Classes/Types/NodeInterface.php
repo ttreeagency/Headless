@@ -68,6 +68,7 @@ class NodeInterface extends InterfaceType
         $className = new $configuration['class'];
         return [
             'type' => $className->type($typeResolver, $nodeTypeWrapper->getNodeType()),
+            'args' => $className->args($typeResolver),
             'description' => $className->description($nodeTypeWrapper->getNodeType())
         ];
     }
