@@ -15,6 +15,10 @@ class Node extends ObjectType
 {
     use NodeTrait;
 
+    protected $skippedNodeTypes = [
+        'Ttree.Headless:Interface'
+    ];
+
     /**
      * @var InterfaceRegistry
      * @Flow\Inject
@@ -42,8 +46,12 @@ class Node extends ObjectType
         /** @var CR\NodeType $nodeType */
         foreach ($nodeTypeWrapper->getNodeType()->getDeclaredSuperTypes() as $nodeType) {
             $name = $nodeType->getName();
+            if (in_array($nodeType, $this->skippedNodeTypes)) {
+                continue;
+            }
             if ($nodeType->isAbstract() === true && $nodeType->isOfType('Ttree.Headless:Interface') && !isset($interfaces[$name])) {
                 $interfaces[$name] = $this->interfaceService->get($typeResolver, $nodeType);
+                $interfaces = $interfaces + $this->interfaces($typeResolver, new Model\NodeTypeWrapper($nodeType));
             }
         }
         return $interfaces;
