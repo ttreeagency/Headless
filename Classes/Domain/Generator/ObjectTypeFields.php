@@ -5,6 +5,7 @@ namespace Ttree\Headless\Domain\Generator;
 
 
 use GraphQL\Type\Definition\Type;
+use InvalidArgumentException;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Ttree\Headless\CustomType\AllNodeCustomField;
@@ -74,8 +75,9 @@ class ObjectTypeFields
     {
         $type = $typeResolver->get([Node::class, $nodeType->getName()], $nodeType);
 
+        $typeClassName = $this->getTypeImplementation($nodeType, 'single');
         /** @var CustomFieldInterface $customType */
-        $customType = new NodeCustomField();
+        $customType = new $typeClassName;
 
         return $this->type($customType, $type, $typeResolver, $nodeTypeShortName, $nodeType);
     }
@@ -109,7 +111,14 @@ class ObjectTypeFields
     protected function getTypeImplementation(NodeType $nodeType, string $presetName): ?string {
         $className = $nodeType->getConfiguration('options.Ttree:Headless.fields.' . $presetName . '.class');
         if ($className === null) {
-            return AllNodeCustomField::class;
+            switch ($presetName) {
+                case 'all':
+                    return AllNodeCustomField::class;
+                case 'single':
+                    return NodeCustomField::class;
+                default:
+                    throw new InvalidArgumentException('Invalid preset name');
+            }
         }
         return $className;
     }
