@@ -72,6 +72,12 @@ trait NodeTrait
         ];
     }
 
+    protected function isPropertyRequired(Model\NodeTypeWrapper $nodeTypeWrapper, string $propertyName)
+    {
+        $validations = $nodeTypeWrapper->getNodeType()->getConfiguration('properties.' . $propertyName . '.validation') ?: [];
+        return isset($validations['Neos.Neos/Validation/NotEmptyValidator']);
+    }
+
     protected function preparePropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
     {
         foreach ($nodeTypeWrapper->getProperties() as $propertyName => $propertyConfiguration) {
@@ -82,6 +88,9 @@ trait NodeTrait
             $type = (new Model\TypeMapper($propertyConfiguration['type']))->convert($typeResolver);
             if ($type === null) {
                 continue;
+            }
+            if ($this->isPropertyRequired($nodeTypeWrapper, $propertyName)) {
+                $type = Type::nonNull($type);
             }
             switch ($propertyConfiguration['type']) {
                 case 'string':
@@ -124,8 +133,10 @@ trait NodeTrait
 
     protected function prepareCustomPropertyDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, string $propertyName, array $configuration): array
     {
+        $options = $configuration['options'] ?? [];
         /** @var CustomFieldTypeInterface|CustomFieldInterface $className */
-        $className = new $configuration['class'];
+        $className = new $configuration['class']($options);
+
         return [
             'type' => $className->type($typeResolver, $nodeTypeWrapper->getNodeType()),
             'args' => $className->args($typeResolver),
