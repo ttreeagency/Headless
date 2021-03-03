@@ -3,8 +3,8 @@
     "description": "Headless CMS API for Neos CMS",
     "type": "neos-package",
     "require": {
-        "neos/neos": "^4.0",
-        "wwwision/graphql": "^2.1"
+        "neos/neos": "^7.0",
+        "wwwision/graphql": "^3.2"
     },
     "autoload": {
         "psr-4": {
