@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Ttree\Headless\Types\InputTypes;
 
 use GraphQL\Language\AST\Node as AstNode;
-use GraphQL\Language\AST\StringValue;
+use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use Neos\ContentRepository\Domain\Model\NodeType as CRNodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -74,12 +74,12 @@ class NodeType extends ScalarType
      * @param AstNode $valueAST
      * @return string
      */
-    public function parseLiteral($valueAST)
+    public function parseLiteral($valueNode, ?array $variables = null)
     {
-        if (!$valueAST instanceof StringValue) {
+        if (!$valueNode instanceof StringValueNode) {
             return null;
         }
-        return $this->parseValue($valueAST->value);
+        return $this->parseValue($valueNode->value);
     }
 
 }

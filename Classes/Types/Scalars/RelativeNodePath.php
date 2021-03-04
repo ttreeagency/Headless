@@ -5,6 +5,7 @@ namespace Ttree\Headless\Types\Scalars;
 
 use GraphQL\Language\AST\Node as AstNode;
 use GraphQL\Language\AST\StringValue;
+use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use Neos\Flow\Annotations as Flow;
 
@@ -50,15 +51,15 @@ class RelativeNodePath extends ScalarType
     }
 
     /**
-     * @param AstNode $valueAST
+     * @param AstNode $valueNode
      * @return string
      */
-    public function parseLiteral($valueAST)
+    public function parseLiteral($valueNode, ?array $variables = null)
     {
-        if (!$valueAST instanceof StringValue) {
+        if (!$valueNode instanceof StringValueNode) {
             return null;
         }
-        return $this->coerceNodePath($valueAST->value);
+        return $this->coerceNodePath($valueNode->value);
     }
 
     /**

@@ -62,14 +62,14 @@ class UnstructuredObjectScalar extends ScalarType
     }
 
     /**
-     * @param AstNode $valueAST
+     * @param AstNode $valueNode
      * @return array
      */
-    public function parseLiteral($valueAST)
+    public function parseLiteral($valueNode, ?array $variables = null)
     {
-        if (!$valueAST instanceof StringValue) {
+        if (!$valueNode instanceof StringValue) {
             return null;
         }
-        return $this->parseValue($valueAST->value);
+        return $this->parseValue($valueNode->value);
     }
 }

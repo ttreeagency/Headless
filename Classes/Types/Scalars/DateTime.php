@@ -5,6 +5,7 @@ namespace Ttree\Headless\Types\Scalars;
 
 use GraphQL\Language\AST\Node as AstNode;
 use GraphQL\Language\AST\StringValue;
+use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use Neos\Flow\Annotations as Flow;
 
@@ -60,14 +61,14 @@ class DateTime extends ScalarType
     }
 
     /**
-     * @param AstNode $valueAST
+     * @param AstNode $valueNode
      * @return \DateTimeImmutable
      */
-    public function parseLiteral($valueAST)
+    public function parseLiteral($valueNode, ?array $variables = null)
     {
-        if (!$valueAST instanceof StringValue) {
+        if (!$valueNode instanceof StringValueNode) {
             return null;
         }
-        return $this->parseValue($valueAST->value);
+        return $this->parseValue($valueNode->value);
     }
 }
