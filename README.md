@@ -103,7 +103,7 @@ class VideoListCustomField implements CustomFieldInterface, CustomFieldTypeInter
             $node = $wrappedNode->getObject();
 
             $query = (new FlowQuery($node->getProperty('selection') ?: []))
-                ->find('[instanceof Medialib.Core:Document.Video]');
+                ->find('[instanceof Medialib.Core:Document.Movie]');
 
             return new IterableAccessibleObject($query->get());
         };
@@ -111,7 +111,7 @@ class VideoListCustomField implements CustomFieldInterface, CustomFieldTypeInter
 
     public function type(TypeResolver $typeResolver, NodeType $nodeType)
     {
-        $nodeType = $this->nodeTypeManager->getNodeType('Medialib.Core:Document.Video');
+        $nodeType = $this->nodeTypeManager->getNodeType('Medialib.Core:Document.Movie');
         $type = $typeResolver->get([Node::class, $nodeType->getName()], $nodeType);
         return Type::listOf($type);
     }
