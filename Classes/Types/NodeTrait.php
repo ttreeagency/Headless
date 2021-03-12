@@ -7,6 +7,7 @@ use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model as CR;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Ttree\Headless\CustomType\CustomFieldInterface;
@@ -16,6 +17,7 @@ use Ttree\Headless\Types\Scalars\DateTime;
 use Ttree\Headless\Types\Scalars\Uuid;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
+use function array_filter;
 
 trait NodeTrait
 {
@@ -172,7 +174,7 @@ trait NodeTrait
     {
         return [
             'type' => $type,
-            // todo add support to have a property description in YAML
+            // @todo add support to have a property description in YAML
             'description' => $propertyName,
             'args' => [
                 'width' => ['type' => Type::int(), 'description' => 'Desired width of the image'],
@@ -194,19 +196,19 @@ trait NodeTrait
                 /** @var CR\NodeInterface $node */
                 $node = $wrappedNode->getObject();
                 $image = $node->getProperty($propertyName);
-                if (!$image) {
+                if (!$image instanceof AssetInterface) {
                     return null;
                 }
-                $args = \array_filter($args);
+                $args = array_filter($args);
                 if ($args !== []) {
                     $configuration = new ThumbnailConfiguration($args['width'] ?? null, $args['maximumWidth'] ?? null, $args['height'] ?? null, $args['maximumHeight'] ?? null, $args['allowCropping'] ?? false, $args['allowUpScaling'] ?? false);
                     $image = $this->thumbnailService->getThumbnail($image, $configuration);
                 }
                 $url = $this->resourceManager->getPublicPersistentResourceUri($image->getResource());
                 return new AccessibleObject(new class($image, $url) {
-                    public $width;
-                    public $height;
-                    public $url;
+                    public int $width;
+                    public int $height;
+                    public string $url;
                     public function __construct(ImageInterface $image, string $url)
                     {
                         $this->width = $image->getWidth();

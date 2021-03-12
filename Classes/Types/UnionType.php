@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\Types;
 
+use GraphQL\Type\Definition;
 use Neos\ContentRepository\Domain\Model as CR;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
-use GraphQL\Type\Definition;
 
 class UnionType extends Definition\UnionType
 {

@@ -5,11 +5,10 @@ namespace Ttree\Headless\Types;
 
 use GraphQL\Type\Definition\ObjectType;
 use Neos\ContentRepository\Domain\Model as CR;
-use Neos\Flow\Exception;
+use Neos\Flow\Annotations as Flow;
 use Ttree\Headless\Domain\Model as Model;
 use Ttree\Headless\Service\InterfaceRegistry;
 use Wwwision\GraphQL\TypeResolver;
-use Neos\Flow\Annotations as Flow;
 
 class Node extends ObjectType
 {
