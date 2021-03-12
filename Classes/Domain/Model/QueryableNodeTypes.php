@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\Domain\Model;
 
+use Generator;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 
@@ -17,13 +19,10 @@ final class QueryableNodeTypes
      */
     protected $nodeTypeManager;
 
-    public function iterate(): \Generator
+    public function iterate(): Generator
     {
-        /** @var \Neos\ContentRepository\Domain\Model\NodeType $nodeType */
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
-            if ($nodeType->isOfType('Ttree.Headless:Queryable') === false) {
-               continue;
-            }
+        /** @var NodeType $nodeType */
+        foreach ($this->nodeTypeManager->getSubNodeTypes('Ttree.Headless:Queryable') as $nodeType) {
             yield $nodeType;
         }
     }
