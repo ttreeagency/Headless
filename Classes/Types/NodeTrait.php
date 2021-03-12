@@ -11,6 +11,9 @@ use Neos\Flow\Exception;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use RuntimeException;
 use Ttree\Headless\CustomType\CustomFieldInterface;
 use Ttree\Headless\CustomType\CustomFieldTypeInterface;
 use Ttree\Headless\Domain\Model as Model;
@@ -19,22 +22,9 @@ use Ttree\Headless\Types\Scalars\DateTime;
 use Ttree\Headless\Types\Scalars\Uuid;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
-use function array_filter;
 
 trait NodeTrait
 {
-    /**
-     * @var \Neos\Media\Domain\Service\ThumbnailService
-     * @Flow\Inject(lazy=false)
-     */
-    protected $thumbnailService;
-
-    /**
-     * @var \Neos\Flow\ResourceManagement\ResourceManager
-     * @Flow\Inject(lazy=false)
-     */
-    protected $resourceManager;
-
     protected function fields(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper): array
     {
         $fields = $this->prepareSystemPropertiesDefinition($typeResolver, $nodeTypeWrapper);
@@ -89,10 +79,17 @@ trait NodeTrait
         foreach ($nodeTypeWrapper->getProperties() as $propertyName => $propertyConfiguration) {
             if (!isset($propertyConfiguration['type']) || $propertyName[0] === '_') continue;
             /** @var Type|NullableType $type */
-            $type = (new Model\TypeMapper($propertyConfiguration['type']))->convert($typeResolver);
-            if ($type === null) {
+            $type = Arrays::getValueByPath($propertyConfiguration, 'options.Ttree:Headless.type');
+            try {
+                if ($type !== null) {
+                    $type = $typeResolver->get($type);
+                } else {
+                    $type = (new Model\TypeMapper($propertyConfiguration['type']))->convert($typeResolver);
+                }
+            } catch (RuntimeException $exception) {
                 continue;
             }
+
             if ($this->isPropertyRequired($nodeTypeWrapper, $propertyName)) {
                 $type = Type::nonNull($type);
             }
@@ -105,7 +102,7 @@ trait NodeTrait
                     $fields[$propertyName] = SimplePropertyDefinition::create($type, $propertyName, $propertyName)->get();
                     break;
                 case 'Neos\Media\Domain\Model\ImageInterface':
-                    $fields[$propertyName] = Model\ImagePropertyDefinition::create($type, $propertyName, $propertyName, $this->thumbnailService, $this->resourceManager);
+                    $fields[$propertyName] = Model\ImagePropertyDefinition::create($type, $propertyName, $propertyName)->get();
                     break;
                 case 'Neos\Media\Domain\Model\Asset':
                     // @todo implement support for Asset

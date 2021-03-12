@@ -11,67 +11,89 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Wwwision\GraphQL\AccessibleObject;
 use Neos\ContentRepository\Domain\Model as CR;
+use Neos\Flow\Annotations as Flow;
 
 final class ImagePropertyDefinition
 {
+    /**
+     * @var ThumbnailService
+     * @Flow\Inject
+     */
+    protected $thumbnailService;
+
+    /**
+     * @var ResourceManager
+     * @Flow\Inject
+     */
+    protected $resourceManager;
+
+    private Type $type;
+    private string $propertyName;
+    private string $description;
     private array $definitions;
 
-    protected function __construct(Type $type, string $propertyName, string $description, ThumbnailService $thumbnailService, ResourceManager $resourceManager)
+    protected function __construct(Type $type, string $propertyName, string $description)
     {
-        $this->definitions = [
-            'type' => $type,
-            'description' => $description,
-            'args' => [
-                'width' => ['type' => Type::int(), 'description' => 'Desired width of the image'],
-                'maximumWidth' => ['type' => Type::int(), 'description' => 'Desired maximum width of the image'],
-                'height' => ['type' => Type::int(), 'description' => 'Desired height of the image'],
-                'maximumHeight' => ['type' => Type::int(), 'description' => 'Desired maximum height of the image'],
-                'allowCropping' => [
-                    'type' => Type::boolean(),
-                    'defaultValue' => false,
-                    'description' => 'Whether the image should be cropped if the given sizes would hurt the aspect ratio'
-                ],
-                'allowUpScaling' => [
-                    'type' => Type::boolean(),
-                    'defaultValue' => false,
-                    'description' => 'Whether the resulting image size might exceed the size of the original image'
-                ],
-            ],
-            'resolve' => function (AccessibleObject $wrappedNode, array $args) use ($propertyName, $thumbnailService, $resourceManager) {
-                /** @var CR\NodeInterface $node */
-                $node = $wrappedNode->getObject();
-                $image = $node->getProperty($propertyName);
-                if (!$image instanceof AssetInterface) {
-                    return null;
-                }
-                $args = array_filter($args);
-                if ($args !== []) {
-                    $configuration = new ThumbnailConfiguration($args['width'] ?? null, $args['maximumWidth'] ?? null, $args['height'] ?? null, $args['maximumHeight'] ?? null, $args['allowCropping'] ?? false, $args['allowUpScaling'] ?? false);
-                    $image = $thumbnailService->getThumbnail($image, $configuration);
-                }
-                $url = $resourceManager->getPublicPersistentResourceUri($image->getResource());
-                return new AccessibleObject(new class($image, $url) {
-                    public int $width;
-                    public int $height;
-                    public string $url;
-                    public function __construct(ImageInterface $image, string $url)
-                    {
-                        $this->width = $image->getWidth();
-                        $this->height = $image->getHeight();
-                        $this->url = $url;
-                    }
-                });
-            }
-        ];
+        $this->definitions = [];
+        $this->type = $type;
+        $this->propertyName = $propertyName;
+        $this->description = $description;
     }
 
-    public static function create(Type $type, string $propertyName, string $description, ThumbnailService $thumbnailService, ResourceManager $resourceManager)
+    public static function create(Type $type, string $propertyName, string $description)
     {
-        return new static($type, $propertyName, $description, $thumbnailService, $resourceManager);
+        return new static($type, $propertyName, $description);
     }
 
     public function get()
     {
+        if ($this->definitions === []) {
+            $this->definitions = [
+                'type' => $this->type,
+                'description' => $this->description,
+                'args' => [
+                    'width' => ['type' => Type::int(), 'description' => 'Desired width of the image'],
+                    'maximumWidth' => ['type' => Type::int(), 'description' => 'Desired maximum width of the image'],
+                    'height' => ['type' => Type::int(), 'description' => 'Desired height of the image'],
+                    'maximumHeight' => ['type' => Type::int(), 'description' => 'Desired maximum height of the image'],
+                    'allowCropping' => [
+                        'type' => Type::boolean(),
+                        'defaultValue' => false,
+                        'description' => 'Whether the image should be cropped if the given sizes would hurt the aspect ratio'
+                    ],
+                    'allowUpScaling' => [
+                        'type' => Type::boolean(),
+                        'defaultValue' => false,
+                        'description' => 'Whether the resulting image size might exceed the size of the original image'
+                    ],
+                ],
+                'resolve' => function (AccessibleObject $wrappedNode, array $args) {
+                    /** @var CR\NodeInterface $node */
+                    $node = $wrappedNode->getObject();
+                    $image = $node->getProperty($this->propertyName);
+                    if (!$image instanceof AssetInterface) {
+                        return null;
+                    }
+                    $args = array_filter($args);
+                    if ($args !== []) {
+                        $configuration = new ThumbnailConfiguration($args['width'] ?? null, $args['maximumWidth'] ?? null, $args['height'] ?? null, $args['maximumHeight'] ?? null, $args['allowCropping'] ?? false, $args['allowUpScaling'] ?? false);
+                        $image = $this->thumbnailService->getThumbnail($image, $configuration);
+                    }
+                    $url = $this->resourceManager->getPublicPersistentResourceUri($image->getResource());
+                    return new AccessibleObject(new class($image, $url) {
+                        public int $width;
+                        public int $height;
+                        public string $url;
+                        public function __construct(ImageInterface $image, string $url)
+                        {
+                            $this->width = $image->getWidth();
+                            $this->height = $image->getHeight();
+                            $this->url = $url;
+                        }
+                    });
+                }
+            ];
+        }
         return $this->definitions;
     }
 }

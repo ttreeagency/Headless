@@ -6,6 +6,7 @@ namespace Ttree\Headless\Domain\Model;
 use GraphQL\Type\Definition\Type;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\ImageInterface;
+use RuntimeException;
 use Ttree\Headless\Types\Image;
 use Ttree\Headless\Types\Scalars\DateTime;
 use Wwwision\GraphQL\TypeResolver;
@@ -22,7 +23,7 @@ final class TypeMapper
         $this->mapping = [];
     }
 
-    public function convert(TypeResolver $typeResolver): ?Type
+    public function convert(TypeResolver $typeResolver): Type
     {
         if ($this->mapping === []) {
             $this->mapping = [
@@ -39,6 +40,10 @@ final class TypeMapper
                 'references' => null,
             ];
         }
-        return $this->mapping[$this->type] ?? null;
+        if (!isset($this->mapping[$this->type])) {
+            throw new RuntimeException(sprintf('Invalid type (%s)', $this->type));
+        }
+
+        return $this->mapping[$this->type];
     }
 }
