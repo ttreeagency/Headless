@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace Ttree\Headless\Domain\Model;
 
 use Neos\ContentRepository\Domain\Model as CR;
+use function str_replace;
 
 final class ContentNamespace
 {
-    protected $raw;
+    protected string $raw;
 
-    protected $namespace;
+    protected string $namespace;
 
     protected function __construct(string $namespace)
     {
@@ -25,7 +26,7 @@ final class ContentNamespace
 
     protected function normalize(string $value): string
     {
-        return \str_replace(['.', ':'], ['', '__'], $value);
+        return str_replace(['.', ':'], ['', '__'], $value);
     }
 
     public function getRaw(): string

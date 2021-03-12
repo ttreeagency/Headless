@@ -8,6 +8,8 @@ use Neos\ContentRepository\Domain\Model as CR;
 final class FieldType
 {
     const NAMESPACE_SEPARATOR = ':';
+    const CUSTOM_NAME_CONFIGURATION_PATH = 'options.Ttree:Headless.name';
+    const CUSTOM_NAMESPACE_CONFIGURATION_PATH = 'options.Ttree:Headless.namespace';
 
     /**
      * @var string
@@ -31,8 +33,8 @@ final class FieldType
             return $current;
         };
 
-        $name = $override($nodeType, $name, 'options.Ttree:Headless.name');
-        $namespace = $override($nodeType, $namespace, 'options.Ttree:Headless.namespace');
+        $name = $override($nodeType, $name, self::CUSTOM_NAME_CONFIGURATION_PATH);
+        $namespace = $override($nodeType, $namespace, self::CUSTOM_NAMESPACE_CONFIGURATION_PATH);
 
         $nodeType = trim(trim($namespace) . self::NAMESPACE_SEPARATOR . trim($name), self::NAMESPACE_SEPARATOR);
 

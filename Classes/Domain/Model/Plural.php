@@ -5,15 +5,9 @@ namespace Ttree\Headless\Domain\Model;
 
 final class Plural
 {
-    /**
-     * @var string
-     */
-    protected $singular;
+    protected string $singular;
 
-    /**
-     * @var string
-     */
-    protected $plural;
+    protected string $plural;
 
     public function __construct(string $singular)
     {

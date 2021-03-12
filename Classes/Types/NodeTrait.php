@@ -36,7 +36,7 @@ trait NodeTrait
         $fields = $this->prepareSystemPropertiesDefinition($typeResolver);
         $fields = $this->preparePropertiesDefinition($typeResolver, $nodeTypeWrapper, $fields);
         $fields = $this->prepareCustomPropertiesDefinition($typeResolver, $nodeTypeWrapper, $fields);
-        return $fields;
+        return $this->removeExcludedProperties($typeResolver, $nodeTypeWrapper, $fields);
     }
 
     protected function prepareSystemPropertiesDefinition(TypeResolver $typeResolver): array
@@ -104,20 +104,29 @@ trait NodeTrait
                     $fields[$propertyName] = $this->prepareImagePropertyDefinition($type, $propertyName);
                     break;
                 case 'Neos\Media\Domain\Model\Asset':
-                    // todo implement
+                    // @todo implement support for Asset
                     break;
                 case 'array<Neos\Media\Domain\Model\Asset>':
-                    // todo implement
+                    // @todo implement support for array of Assets
                     break;
                 case 'reference':
-                    // todo implement
+                    // @todo implement reference support
                     break;
                 case 'references':
-                    // todo implement
+                    // @todo implement references support
                     break;
                 default:
                     throw new Exception('Unsupported type exception', 1510943187);
             }
+        }
+        return $fields;
+    }
+
+    protected function removeExcludedProperties(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
+    {
+        $excludedProperties = $nodeTypeWrapper->getConfiguration('options.Ttree:Headless.excludedProperties') ?: [];
+        foreach ($excludedProperties as $propertyName) {
+            unset($fields[$propertyName]);
         }
         return $fields;
     }

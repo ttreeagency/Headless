@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\Types\Scalars;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use GraphQL\Language\AST\Node as AstNode;
 use GraphQL\Language\AST\StringValue;
 use GraphQL\Language\AST\StringValueNode;
@@ -16,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
  */
 class DateTime extends ScalarType
 {
+    const DEFAULT_FORMAT = DATE_ISO8601;
 
     /**
      * @var string
@@ -33,27 +36,27 @@ class DateTime extends ScalarType
     }
 
     /**
-     * @param \DateTimeInterface $value
+     * @param DateTimeInterface $value
      * @return string
      */
     public function serialize($value)
     {
-        if (!$value instanceof \DateTimeInterface) {
+        if (!$value instanceof DateTimeInterface) {
             return null;
         }
-        return $value->format(DATE_ISO8601);
+        return $value->format(self::DEFAULT_FORMAT);
     }
 
     /**
      * @param string $value
-     * @return \DateTimeImmutable
+     * @return DateTimeImmutable
      */
     public function parseValue($value)
     {
         if (!is_string($value)) {
             return null;
         }
-        $dateTime = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $value);
+        $dateTime = DateTimeImmutable::createFromFormat(self::DEFAULT_FORMAT, $value);
         if ($dateTime === false) {
             return null;
         }
@@ -62,7 +65,8 @@ class DateTime extends ScalarType
 
     /**
      * @param AstNode $valueNode
-     * @return \DateTimeImmutable
+     * @param array|null $variables
+     * @return DateTimeImmutable
      */
     public function parseLiteral($valueNode, ?array $variables = null)
     {

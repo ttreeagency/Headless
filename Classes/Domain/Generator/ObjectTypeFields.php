@@ -14,6 +14,7 @@ use Ttree\Headless\CustomType\NodeCustomField;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\FieldType;
 use Ttree\Headless\Domain\Model\Plural;
+use Ttree\Headless\Domain\Model\PresetClassConfigurationPath;
 use Ttree\Headless\Domain\Model\QueryableNodeTypes;
 use Ttree\Headless\Types\Node;
 use Wwwision\GraphQL\TypeResolver;
@@ -108,18 +109,17 @@ class ObjectTypeFields
         ];
     }
 
-    protected function getTypeImplementation(NodeType $nodeType, string $presetName): ?string {
-        $className = $nodeType->getConfiguration('options.Ttree:Headless.fields.' . $presetName . '.class');
-        if ($className === null) {
-            switch ($presetName) {
-                case 'all':
-                    return AllNodeCustomField::class;
-                case 'single':
-                    return NodeCustomField::class;
-                default:
-                    throw new InvalidArgumentException('Invalid preset name');
-            }
+    protected function getTypeImplementation(NodeType $nodeType, string $presetName): ?string
+    {
+        $className = $nodeType->getConfiguration(PresetClassConfigurationPath::fromPresetName($presetName));
+        if ($className) return $className;
+        switch ($presetName) {
+            case 'all':
+                return AllNodeCustomField::class;
+            case 'single':
+                return NodeCustomField::class;
+            default:
+                throw new InvalidArgumentException('Invalid preset name');
         }
-        return $className;
     }
 }

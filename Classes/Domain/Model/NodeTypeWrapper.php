@@ -8,15 +8,17 @@ use Neos\Flow\Exception;
 
 final class NodeTypeWrapper
 {
-    protected $nodeType;
-    protected $namespace;
-    protected $shortName;
-    protected $contentNamespace;
+    const UNSTRUCTURED_NODETYPE = 'unstructured';
+
+    protected CR\NodeType $nodeType;
+    protected string $namespace;
+    protected string $shortName;
+    protected ContentNamespace $contentNamespace;
 
     public function __construct(CR\NodeType $nodeType)
     {
         $this->nodeType = $nodeType;
-        if ($nodeType->getName() === 'unstructured') {
+        if ($nodeType->getName() === self::UNSTRUCTURED_NODETYPE) {
             throw new Exception('Unstructured Node Type can not be used in the GraphQL API', 1510922748);
         }
 

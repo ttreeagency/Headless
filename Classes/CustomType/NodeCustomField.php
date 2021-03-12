@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\CustomType;
 
+use InvalidArgumentException;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\Flow\Annotations as Flow;
@@ -39,17 +40,17 @@ class NodeCustomField implements CustomFieldInterface
             if (isset($args['identifier'])) {
                 $node = $context->getNodeByIdentifier($args['identifier']);
                 if ($node === null) {
-                    throw new \InvalidArgumentException('Unable to find a node with the given identifier');
+                    throw new InvalidArgumentException('Unable to find a node with the given identifier');
                 }
                 return new AccessibleObject($node);
             } elseif (isset($args['path'])) {
                 $node = $context->getNode($args['path']);
                 if ($node === null) {
-                    throw new \InvalidArgumentException('Unable to find a node with the given path');
+                    throw new InvalidArgumentException('Unable to find a node with the given path');
                 }
                 return new AccessibleObject($node);
             }
-            throw new \InvalidArgumentException('node path or identifier have to be specified!', 1460064707);
+            throw new InvalidArgumentException('node path or identifier have to be specified!', 1460064707);
         };
     }
 }
