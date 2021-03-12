@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\Types;
 
+use GraphQL\Type\Definition\NullableType;
 use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model as CR;
 use Neos\Flow\Annotations as Flow;
@@ -13,6 +14,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Ttree\Headless\CustomType\CustomFieldInterface;
 use Ttree\Headless\CustomType\CustomFieldTypeInterface;
 use Ttree\Headless\Domain\Model as Model;
+use Ttree\Headless\Domain\Model\SimplePropertyDefinition;
 use Ttree\Headless\Types\Scalars\DateTime;
 use Ttree\Headless\Types\Scalars\Uuid;
 use Wwwision\GraphQL\AccessibleObject;
@@ -23,26 +25,28 @@ trait NodeTrait
 {
     /**
      * @var \Neos\Media\Domain\Service\ThumbnailService
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      */
     protected $thumbnailService;
 
     /**
      * @var \Neos\Flow\ResourceManagement\ResourceManager
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      */
     protected $resourceManager;
 
     protected function fields(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper): array
     {
-        $fields = $this->prepareSystemPropertiesDefinition($typeResolver);
+        $fields = $this->prepareSystemPropertiesDefinition($typeResolver, $nodeTypeWrapper);
         $fields = $this->preparePropertiesDefinition($typeResolver, $nodeTypeWrapper, $fields);
         $fields = $this->prepareCustomPropertiesDefinition($typeResolver, $nodeTypeWrapper, $fields);
-        return $this->removeExcludedProperties($typeResolver, $nodeTypeWrapper, $fields);
+        return $this->removeExcludedProperties($nodeTypeWrapper, $fields);
     }
 
-    protected function prepareSystemPropertiesDefinition(TypeResolver $typeResolver): array
+    protected function prepareSystemPropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper): array
     {
+        if ($nodeTypeWrapper->getConfiguration('options.Ttree:Headless.disableSystemProperties') === true) return [];
+
         return [
             'id' => [
                 'type' => Type::nonNull($typeResolver->get(Uuid::class)),
@@ -83,10 +87,8 @@ trait NodeTrait
     protected function preparePropertiesDefinition(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
     {
         foreach ($nodeTypeWrapper->getProperties() as $propertyName => $propertyConfiguration) {
-            if (!isset($propertyConfiguration['type']) || $propertyName[0] === '_') {
-                continue;
-            }
-            /** @var Type $type */
+            if (!isset($propertyConfiguration['type']) || $propertyName[0] === '_') continue;
+            /** @var Type|NullableType $type */
             $type = (new Model\TypeMapper($propertyConfiguration['type']))->convert($typeResolver);
             if ($type === null) {
                 continue;
@@ -100,10 +102,10 @@ trait NodeTrait
                 case 'boolean':
                 case 'array':
                 case 'DateTime':
-                    $fields[$propertyName] = $this->prepareSimplePropertyDefinition($type, $propertyName);
+                    $fields[$propertyName] = SimplePropertyDefinition::create($type, $propertyName, $propertyName)->get();
                     break;
                 case 'Neos\Media\Domain\Model\ImageInterface':
-                    $fields[$propertyName] = $this->prepareImagePropertyDefinition($type, $propertyName);
+                    $fields[$propertyName] = Model\ImagePropertyDefinition::create($type, $propertyName, $propertyName, $this->thumbnailService, $this->resourceManager);
                     break;
                 case 'Neos\Media\Domain\Model\Asset':
                     // @todo implement support for Asset
@@ -124,7 +126,7 @@ trait NodeTrait
         return $fields;
     }
 
-    protected function removeExcludedProperties(TypeResolver $typeResolver, Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
+    protected function removeExcludedProperties(Model\NodeTypeWrapper $nodeTypeWrapper, array $fields): array
     {
         $excludedProperties = $nodeTypeWrapper->getConfiguration('options.Ttree:Headless.excludedProperties') ?: [];
         foreach ($excludedProperties as $propertyName) {
@@ -153,70 +155,6 @@ trait NodeTrait
             'args' => $className->args($typeResolver),
             'description' => $className->description($nodeTypeWrapper->getNodeType()),
             'resolve' => $className->resolve($nodeTypeWrapper->getNodeType())
-        ];
-    }
-
-    protected function prepareSimplePropertyDefinition(Type $type, string $propertyName): array
-    {
-        return [
-            'type' => $type,
-            // todo add support to have a property description in YAML
-            'description' => $propertyName,
-            'resolve' => function (AccessibleObject $wrappedNode) use ($propertyName) {
-                /** @var CR\NodeInterface $node */
-                $node = $wrappedNode->getObject();
-                return $node->getProperty($propertyName);
-            }
-        ];
-    }
-
-    protected function prepareImagePropertyDefinition(Type $type, string $propertyName): array
-    {
-        return [
-            'type' => $type,
-            // @todo add support to have a property description in YAML
-            'description' => $propertyName,
-            'args' => [
-                'width' => ['type' => Type::int(), 'description' => 'Desired width of the image'],
-                'maximumWidth' => ['type' => Type::int(), 'description' => 'Desired maximum width of the image'],
-                'height' => ['type' => Type::int(), 'description' => 'Desired height of the image'],
-                'maximumHeight' => ['type' => Type::int(), 'description' => 'Desired maximum height of the image'],
-                'allowCropping' => [
-                    'type' => Type::boolean(),
-                    'defaultValue' => false,
-                    'description' => 'Whether the image should be cropped if the given sizes would hurt the aspect ratio'
-                ],
-                'allowUpScaling' => [
-                    'type' => Type::boolean(),
-                    'defaultValue' => false,
-                    'description' => 'Whether the resulting image size might exceed the size of the original image'
-                ],
-            ],
-            'resolve' => function (AccessibleObject $wrappedNode, array $args) use ($propertyName) {
-                /** @var CR\NodeInterface $node */
-                $node = $wrappedNode->getObject();
-                $image = $node->getProperty($propertyName);
-                if (!$image instanceof AssetInterface) {
-                    return null;
-                }
-                $args = array_filter($args);
-                if ($args !== []) {
-                    $configuration = new ThumbnailConfiguration($args['width'] ?? null, $args['maximumWidth'] ?? null, $args['height'] ?? null, $args['maximumHeight'] ?? null, $args['allowCropping'] ?? false, $args['allowUpScaling'] ?? false);
-                    $image = $this->thumbnailService->getThumbnail($image, $configuration);
-                }
-                $url = $this->resourceManager->getPublicPersistentResourceUri($image->getResource());
-                return new AccessibleObject(new class($image, $url) {
-                    public int $width;
-                    public int $height;
-                    public string $url;
-                    public function __construct(ImageInterface $image, string $url)
-                    {
-                        $this->width = $image->getWidth();
-                        $this->height = $image->getHeight();
-                        $this->url = $url;
-                    }
-                });
-            }
         ];
     }
 }
