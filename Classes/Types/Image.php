@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\Type;
 use Ttree\Headless\Types\Scalars;
 use Wwwision\GraphQL\TypeResolver;
 
-final class Image extends ObjectType
+final class Image extends ObjectType implements TypeResolverBasedInterface
 {
 
     public function __construct(TypeResolver $typeResolver)
@@ -19,8 +19,7 @@ final class Image extends ObjectType
             'fields' => [
                 'url' => ['type' => Type::nonNull($typeResolver->get(Scalars\Url::class))],
                 'width' => ['type' => Type::nonNull(Type::int())],
-                'height' => ['type' => Type::nonNull(Type::int())],
-                'orientation' => ['type' => Type::nonNull(Type::string())]
+                'height' => ['type' => Type::nonNull(Type::int())]
             ],
         ]);
     }

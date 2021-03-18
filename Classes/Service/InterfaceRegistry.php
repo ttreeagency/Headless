@@ -5,6 +5,7 @@ namespace Ttree\Headless\Service;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
+use Ttree\Headless\Domain\Model\FieldType;
 use Ttree\Headless\Types\NodeInterface;
 use Wwwision\GraphQL\TypeResolver;
 
@@ -13,14 +14,14 @@ use Wwwision\GraphQL\TypeResolver;
  */
 final class InterfaceRegistry
 {
-    protected $interfaces = [];
+    protected static array $interfaces = [];
 
     public function get(TypeResolver $typeResolver, NodeType $nodeType): NodeInterface
     {
-        $name = $nodeType->getName();
-        if (!isset($this->interfaces[$name])) {
-            $this->interfaces[$name] = new NodeInterface($typeResolver, $nodeType);
+        $name = FieldType::createFromNodeType($nodeType)->getName();
+        if (!isset(self::$interfaces[$name])) {
+            self::$interfaces[$name] = new NodeInterface($typeResolver, $nodeType);
         }
-        return $this->interfaces[$name];
+        return self::$interfaces[$name];
     }
 }

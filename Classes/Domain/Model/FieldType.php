@@ -11,6 +11,7 @@ final class FieldType
     const CUSTOM_NAME_CONFIGURATION_PATH = 'options.Ttree:Headless.name';
     const CUSTOM_NAMESPACE_CONFIGURATION_PATH = 'options.Ttree:Headless.namespace';
 
+    protected static array $cache = [];
     /**
      * @var string
      */
@@ -18,11 +19,13 @@ final class FieldType
 
     protected function __construct(string $name)
     {
-        $this->name = \str_replace(['.', self::NAMESPACE_SEPARATOR], '', $name);
+        $this->name = str_replace(['.', self::NAMESPACE_SEPARATOR], '', $name);
     }
 
     public static function createFromNodeType(CR\NodeType $nodeType)
     {
+        if (isset(self::$cache[$nodeType->getName()])) return self::$cache[$nodeType->getName()];
+
         list($namespace, $name) = explode(self::NAMESPACE_SEPARATOR, $nodeType->getName());
 
         $override = function (CR\NodeType $nodeType, string $current, string $path) {
@@ -36,9 +39,9 @@ final class FieldType
         $name = $override($nodeType, $name, self::CUSTOM_NAME_CONFIGURATION_PATH);
         $namespace = $override($nodeType, $namespace, self::CUSTOM_NAMESPACE_CONFIGURATION_PATH);
 
-        $nodeType = trim(trim($namespace) . self::NAMESPACE_SEPARATOR . trim($name), self::NAMESPACE_SEPARATOR);
+        self::$cache[$nodeType->getName()] = new static(trim(trim($namespace) . self::NAMESPACE_SEPARATOR . trim($name), self::NAMESPACE_SEPARATOR));
 
-        return new static($nodeType);
+        return self::$cache[$nodeType->getName()];
     }
 
     public function getName(): string

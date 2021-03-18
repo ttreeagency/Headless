@@ -10,7 +10,7 @@ use Ttree\Headless\Domain\Model as Model;
 use Ttree\Headless\Service\InterfaceRegistry;
 use Wwwision\GraphQL\TypeResolver;
 
-class Node extends ObjectType
+class Node extends ObjectType implements TypeResolverBasedInterface
 {
     use NodeTrait;
 

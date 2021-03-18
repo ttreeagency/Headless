@@ -8,7 +8,7 @@ use Neos\ContentRepository\Domain\Model as CR;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
 
-class UnionType extends Definition\UnionType
+class UnionType extends Definition\UnionType implements TypeResolverBasedInterface
 {
     public function __construct(TypeResolver $typeResolver, string $name, array $configuration)
     {

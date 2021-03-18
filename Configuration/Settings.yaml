@@ -1,5 +1,18 @@
 Ttree:
   Headless:
+    eel:
+      defaultContext:
+        String: Neos\Eel\Helper\StringHelper
+        Array: Neos\Eel\Helper\ArrayHelper
+        Date: Neos\Eel\Helper\DateHelper
+        Configuration: Neos\Eel\Helper\ConfigurationHelper
+        Math: Neos\Eel\Helper\MathHelper
+        Json: Neos\Eel\Helper\JsonHelper
+        I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+        q: Neos\Eel\FlowQuery\FlowQuery::q
+    query:
+      name: 'Query'
+      description: 'Root queries for the Neos Content Repository'
     unionTypes: []
 
 Wwwision:

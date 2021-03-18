@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Ttree\Headless\Domain\Generator;
 
 
+use Doctrine\Inflector\InflectorFactory;
 use GraphQL\Type\Definition\Type;
 use InvalidArgumentException;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -13,7 +14,6 @@ use Ttree\Headless\CustomType\CustomFieldInterface;
 use Ttree\Headless\CustomType\NodeCustomField;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\FieldType;
-use Ttree\Headless\Domain\Model\Plural;
 use Ttree\Headless\Domain\Model\PresetClassConfigurationPath;
 use Ttree\Headless\Domain\Model\QueryableNodeTypes;
 use Ttree\Headless\Types\Node;
@@ -85,7 +85,8 @@ class ObjectTypeFields
 
     protected function allRecordsFieldName(string $name)
     {
-        return 'all' . (string)(new Plural($name));
+        $inflector = InflectorFactory::create();
+        return 'all' . $inflector->build()->pluralize($name);
     }
 
     protected function allRecordsFieldDefinition(TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)

@@ -15,7 +15,7 @@ use Ttree\Headless\Types\Scalars\Uuid;
 use Wwwision\GraphQL\AccessibleObject;
 use Wwwision\GraphQL\TypeResolver;
 
-class NodeInterface extends InterfaceType
+class NodeInterface extends InterfaceType implements TypeResolverBasedInterface
 {
     use NodeTrait;
 
@@ -30,7 +30,7 @@ class NodeInterface extends InterfaceType
 
         $fields = $this->fields($typeResolver, $nodeTypeWrapper);
 
-        $config = [
+        parent::__construct([
             'name' => $nodeTypeWrapper->getTypeName(),
             // todo add support to have a node type description in YAML
             'description' => $nodeTypeWrapper->getName(),
@@ -39,9 +39,7 @@ class NodeInterface extends InterfaceType
                 $node = $wrappedObject->getObject();
                 return $typeResolver->get([Node::class, $node->getNodeType()->getName()], $node->getNodeType());
             }
-        ];
-
-        parent::__construct($config);
+        ]);
     }
 
     protected function prepareSystemPropertiesDefinition(TypeResolver $typeResolver): array

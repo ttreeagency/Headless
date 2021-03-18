@@ -5,9 +5,10 @@ namespace Ttree\Headless\Types\InputTypes;
 
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
+use Ttree\Headless\Types\TypeResolverBasedInterface;
 use Wwwision\GraphQL\TypeResolver;
 
-class Package extends InputObjectType
+class Package extends InputObjectType implements TypeResolverBasedInterface
 {
 
     public function __construct(TypeResolver $typeResolver)

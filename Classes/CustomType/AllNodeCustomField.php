@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\CustomType;
 
+use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -22,8 +23,13 @@ class AllNodeCustomField implements CustomFieldInterface
     public function args(TypeResolver $typeResolver): array
     {
         return [
-            'parentIdentifier' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
-            'parentPath' => ['type' => $typeResolver->get(Scalars\AbsoluteNodePath::class)],
+            'from' => ['type' => $typeResolver->get(Scalars\Uuid::class)],
+            'depth' => ['type' => Type::int(), 'defaultValue' => 1],
+            'limit' => [
+                'type' => Type::int(),
+                'description' => 'The maximum number of records returned',
+                'defaultValue' => 5
+            ]
         ];
     }
 
@@ -36,13 +42,7 @@ class AllNodeCustomField implements CustomFieldInterface
     {
         return function ($_, array $args) use ($nodeType) {
             $context = $this->contextFactory->create();
-            if (isset($args['parentIdentifier'])) {
-                $parentNode = $context->getNodeByIdentifier($args['parentIdentifier']);
-            } elseif (isset($args['parentPath'])) {
-                $parentNode = $context->getNode($args['parentPath']);
-            } else {
-                $parentNode = $context->getRootNode();
-            }
+            $parentNode = $context->getNodeByIdentifier($args['from']);
             $query = new FlowQuery([$parentNode]);
 
             return new IterableAccessibleObject($query->find('[instanceof ' . $nodeType->getName() . ']')->get());
