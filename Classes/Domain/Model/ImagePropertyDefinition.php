@@ -70,17 +70,17 @@ final class ImagePropertyDefinition
                 'resolve' => function (AccessibleObject $wrappedNode, array $args) {
                     /** @var CR\NodeInterface $node */
                     $node = $wrappedNode->getObject();
-                    $image = $node->getProperty($this->propertyName);
-                    if (!$image instanceof AssetInterface) {
+                    $asset = $node->getProperty($this->propertyName);
+                    if (!$asset instanceof AssetInterface) {
                         return null;
                     }
                     $args = array_filter($args);
                     if ($args !== []) {
                         $configuration = new ThumbnailConfiguration($args['width'] ?? null, $args['maximumWidth'] ?? null, $args['height'] ?? null, $args['maximumHeight'] ?? null, $args['allowCropping'] ?? false, $args['allowUpScaling'] ?? false);
-                        $image = $this->thumbnailService->getThumbnail($image, $configuration);
+                        $asset = $this->thumbnailService->getThumbnail($asset, $configuration);
                     }
-                    $url = $this->resourceManager->getPublicPersistentResourceUri($image->getResource());
-                    return new AccessibleObject(new class($image, $url) {
+                    $url = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+                    return new AccessibleObject(new class($asset, $url) {
                         public int $width;
                         public int $height;
                         public string $url;
