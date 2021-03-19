@@ -15,7 +15,7 @@ final class Image extends ObjectType implements TypeResolverBasedInterface
     {
         return parent::__construct([
             'name' => 'Image',
-            'description' => 'Representation of a binary image with thumbnail',
+            'description' => 'Representation of an image with thumbnail capability',
             'fields' => [
                 'url' => ['type' => Type::nonNull($typeResolver->get(Scalars\Url::class))],
                 'width' => ['type' => Type::nonNull(Type::int())],

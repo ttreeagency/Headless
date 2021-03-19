@@ -28,13 +28,11 @@ class NodeInterface extends InterfaceType implements TypeResolverBasedInterface
     {
         $nodeTypeWrapper = new Model\NodeTypeWrapper($nodeType);
 
-        $fields = $this->fields($typeResolver, $nodeTypeWrapper);
-
         parent::__construct([
             'name' => $nodeTypeWrapper->getTypeName(),
             // todo add support to have a node type description in YAML
             'description' => $nodeTypeWrapper->getName(),
-            'fields' => $fields,
+            'fields' => $this->fields($typeResolver, $nodeTypeWrapper),
             'resolveType' => function (AccessibleObject $wrappedObject) use ($typeResolver) {
                 $node = $wrappedObject->getObject();
                 return $typeResolver->get([Node::class, $node->getNodeType()->getName()], $node->getNodeType());
