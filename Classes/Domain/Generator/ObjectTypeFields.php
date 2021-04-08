@@ -97,7 +97,7 @@ class ObjectTypeFields
         /** @var CustomFieldInterface $customType */
         $customType = new $typeClassName;
 
-        return $this->type($customType, Type::listOf($type), $typeResolver, $nodeTypeShortName, $nodeType);
+        return $this->type($customType, Type::nonNull(Type::listOf(Type::nonNull($type))), $typeResolver, $nodeTypeShortName, $nodeType);
     }
 
     protected function type(CustomFieldInterface $customType, $type, TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)

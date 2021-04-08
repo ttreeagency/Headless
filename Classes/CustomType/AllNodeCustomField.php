@@ -28,7 +28,7 @@ class AllNodeCustomField implements CustomFieldInterface
             'limit' => [
                 'type' => Type::int(),
                 'description' => 'The maximum number of records returned',
-                'defaultValue' => 5
+                'defaultValue' => 10
             ]
         ];
     }
