@@ -35,7 +35,7 @@ class NodeCustomField implements CustomFieldInterface
     public function resolve(NodeType $nodeType): \Closure
     {
         return function ($_, array $args) use ($nodeType) {
-            $context = $this->contextFactory->create();
+            $context = $this->contextFactory->create(['workspaceName' => 'live']);
             //  @todo enfore node type
             if (isset($args['identifier'])) {
                 $node = $context->getNodeByIdentifier($args['identifier']);
