@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Ttree\Headless\CustomType;
 
+use GraphQL\Error\Error;
 use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
@@ -42,8 +43,11 @@ class AllNodeCustomField implements CustomFieldInterface
     public function resolve(NodeType $nodeType): \Closure
     {
         return function ($_, array $args) use ($nodeType) {
-            $context = $this->contextFactory->create();
+            $context = $this->contextFactory->create(['workspaceName' => 'live']);
             $parentNode = $context->getNodeByIdentifier($args['from']);
+            if (!$parentNode instanceof TraversableNodeInterface) {
+                throw new Error(vsprintf("Unable to find the parent node, the value in your 'from' parameter (%s) is probable wrong.", [$args['from']]));
+            }
             $query = new FlowQuery([$parentNode]);
 
             return new IterableAccessibleObject($query->find('[instanceof ' . $nodeType->getName() . ']')->get());
