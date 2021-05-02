@@ -1,0 +1,5 @@
+Wwwision:
+  GraphQL:
+    endpoints:
+      'api/content':
+        querySchema: Ttree\Headless\Types\RootTypes\Query

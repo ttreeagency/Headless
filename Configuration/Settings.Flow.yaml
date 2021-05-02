@@ -1,0 +1,15 @@
+Neos:
+  Flow:
+    security:
+      authentication:
+        providers:
+          Neos.Neos:Backend:
+            requestPatterns:
+              Ttree.Headless:ControllerObjectName:
+                pattern: ControllerObjectName
+                patternOptions:
+                  controllerObjectNamePattern: 'Wwwision\GraphQL\.*'
+    mvc:
+      routes:
+        Ttree.Headless:
+          position: 'before Neos.Neos'
