@@ -5,7 +5,8 @@ namespace Ttree\Headless\CustomType;
 
 use GraphQL\Type\Definition\Type;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Ttree\Headless\Types\Scalars;
@@ -15,7 +16,7 @@ use Wwwision\GraphQL\TypeResolver;
 class AllNodeCustomField implements CustomFieldInterface
 {
     /**
-     * @var ContextFactory
+     * @var ContextFactoryInterface
      * @Flow\Inject
      */
     protected $contextFactory;
