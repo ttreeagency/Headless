@@ -11,6 +11,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Ttree\Headless\CustomType\AllNodeCustomField;
 use Ttree\Headless\CustomType\CustomFieldInterface;
+use Ttree\Headless\CustomType\CustomFieldTypeInterface;
 use Ttree\Headless\CustomType\NodeCustomField;
 use Ttree\Headless\Domain\Model\ContentNamespace;
 use Ttree\Headless\Domain\Model\FieldType;
@@ -53,8 +54,12 @@ class ObjectTypeFields
                 continue;
             }
             $name = FieldType::createFromNodeType($nodeType)->getName();
-            $fields[$this->singleRecordFieldName($name)] = $this->singleFieldDefinition($this->typeResolver, $name, $nodeType);
-            $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($this->typeResolver, $name, $nodeType);
+            if ($nodeType->getConfiguration('options.Ttree:Headless.queries.single') !== false) {
+                $fields[$this->singleRecordFieldName($name)] = $this->singleFieldDefinition($this->typeResolver, $name, $nodeType);
+            }
+            if ($nodeType->getConfiguration('options.Ttree:Headless.queries.all') !== false) {
+                $fields[$this->allRecordsFieldName($name)] = $this->allRecordsFieldDefinition($this->typeResolver, $name, $nodeType);
+            }
             // todo add support for custom fields
         }
 
@@ -80,6 +85,10 @@ class ObjectTypeFields
         /** @var CustomFieldInterface $customType */
         $customType = new $typeClassName;
 
+        $type = $customType instanceof CustomFieldTypeInterface
+            ? $customType->type($typeResolver, $nodeType)
+            : $type;
+
         return $this->type($customType, $type, $typeResolver, $nodeTypeShortName, $nodeType);
     }
 
@@ -97,7 +106,11 @@ class ObjectTypeFields
         /** @var CustomFieldInterface $customType */
         $customType = new $typeClassName;
 
-        return $this->type($customType, Type::nonNull(Type::listOf(Type::nonNull($type))), $typeResolver, $nodeTypeShortName, $nodeType);
+        $type = $customType instanceof CustomFieldTypeInterface
+            ? $customType->type($typeResolver, $nodeType)
+            : Type::nonNull(Type::listOf(Type::nonNull($type)));
+
+        return $this->type($customType, $type, $typeResolver, $nodeTypeShortName, $nodeType);
     }
 
     protected function type(CustomFieldInterface $customType, $type, TypeResolver $typeResolver, string $nodeTypeShortName, NodeType $nodeType)

@@ -1,5 +1,11 @@
 Ttree.Headless:Queryable:
   abstract: true
+  options:
+    Ttree:Headless:
+      disableSystemProperties: false
+      queries:
+        all: true
+        single: true
 
 Ttree.Headless:Interface:
   abstract: true

@@ -8,5 +8,5 @@ use Wwwision\GraphQL\TypeResolver;
 
 interface CustomFieldTypeInterface
 {
-    public function type(TypeResolver $typeResolver,NodeType $nodeType);
+    public function type(TypeResolver $typeResolver, NodeType $nodeType);
 }
