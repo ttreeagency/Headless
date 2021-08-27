@@ -12,4 +12,4 @@ Neos:
     mvc:
       routes:
         Ttree.Headless:
-          position: 'before Neos.Neos'
+          position: 'before Neos.Neos.Ui'
